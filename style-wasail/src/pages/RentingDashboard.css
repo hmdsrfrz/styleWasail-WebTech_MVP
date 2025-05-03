@@ -1,0 +1,189 @@
+/* src/components/RentingDashboard.css */
+.renting-dashboard-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .dashboard-content {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    padding: 2rem;
+    margin-left: 300px;
+    overflow-y: auto;
+  }
+  
+  .dashboard-title {
+    font-family: 'Cal Sans', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: rgb(94, 9, 65);
+    margin-bottom: 2rem;
+  }
+  
+  .rentals-table-container {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .rentals-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .rentals-table th {
+    text-align: left;
+    padding: 1rem;
+    color: rgb(94, 9, 65);
+    border-bottom: 1px solid rgba(94, 9, 65, 0.3);
+  }
+  
+  .rental-row {
+    border-bottom: 1px solid rgba(94, 9, 65, 0.1);
+  }
+  
+  .rentals-table td {
+    padding: 1rem;
+    color: rgb(94, 9, 65);
+  }
+  
+  .components-list {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  .status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: inline-block;
+  }
+  
+  .status-badge.active {
+    background-color: rgba(94, 9, 65, 0.2);
+    color: rgb(94, 9, 65);
+  }
+  
+  .status-badge.pending {
+    background-color: rgba(255, 193, 7, 0.2);
+    color: #b08d00;
+  }
+  
+  .status-badge.completed {
+    background-color: rgba(108, 117, 125, 0.2);
+    color: #495057;
+  }
+  
+  .status-badge.pending-extension {
+    background-color: rgba(23, 162, 184, 0.2);
+    color: #0d6efd;
+  }
+  
+  .extend-button {
+    padding: 0.5rem 1rem;
+    background-color: rgb(94, 9, 65);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
+  
+  .extend-button:hover {
+    background-color: rgb(74, 9, 55);
+    transform: translateY(-1px);
+  }
+  
+  .extend-button:active {
+    transform: translateY(0);
+  }
+  
+  .extension-request {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: rgba(94, 9, 65, 0.7);
+  }
+  
+  /* Modal Styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background-color: white;
+    border-radius: 16px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .modal-content h2 {
+    color: rgb(94, 9, 65);
+    margin-bottom: 1rem;
+  }
+  
+  .date-picker-group {
+    margin: 1.5rem 0;
+  }
+  
+  .date-picker-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: rgb(94, 9, 65);
+    font-weight: 500;
+  }
+  
+  .date-picker {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid rgba(94, 9, 65, 0.3);
+    font-size: 1rem;
+  }
+  
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .cancel-button {
+    padding: 0.75rem 1.5rem;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #333;
+  }
+  
+  .submit-button {
+    padding: 0.75rem 1.5rem;
+    background-color: rgb(94, 9, 65);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .submit-button:disabled {
+    background-color: rgba(94, 9, 65, 0.5);
+    cursor: not-allowed;
+  }

@@ -4,10 +4,12 @@ import { motion as Motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import VantaBackground from '../components/VantaBackground';
 import OutfitGrid from '../components/OutfitGrid';
-import '../components/OutfitGrid.css'; // Import CSS here
+import CreateOutfitModal from '../components/CreateOutfitModal';
+import '../components/OutfitGrid.css';
 
 export default function UserHome() {
   const [isNavHovered, setIsNavHovered] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const location = useLocation();
 
   const navItems = [
@@ -16,6 +18,11 @@ export default function UserHome() {
     { name: 'Renting Dashboard', path: '/renting' },
     { name: 'Account Settings', path: '/account' }
   ];
+
+  const handleCreateOutfit = (outfitData) => {
+    console.log('New outfit created:', outfitData);
+    // In a real app, you would send this to your backend here
+  };
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
@@ -100,6 +107,41 @@ export default function UserHome() {
       >
         <OutfitGrid />
       </Motion.div>
+
+      {/* Create Outfit Button */}
+      <Motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => setShowCreateModal(true)}
+        style={{
+          position: 'fixed',
+          right: '20px',
+          bottom: '20px',
+          width: '60px',
+          height: '60px',
+          borderRadius: '50%',
+          backgroundColor: 'rgb(94, 9, 65)',
+          color: 'white',
+          border: 'none',
+          fontSize: '2rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          zIndex: 100,
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)'
+        }}
+      >
+        +
+      </Motion.button>
+
+      {/* Create Outfit Modal */}
+      {showCreateModal && (
+        <CreateOutfitModal
+          onClose={() => setShowCreateModal(false)}
+          onSubmit={handleCreateOutfit}
+        />
+      )}
     </div>
   );
 }

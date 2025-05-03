@@ -1,0 +1,155 @@
+/* src/components/MoodboardPrompt.css */
+.moodboard-prompt-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .moodboard-prompt-content {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  .moodboard-prompt-content h2 {
+    color: rgb(94, 9, 65);
+    margin-bottom: 10px;
+    font-family: 'Cal Sans', sans-serif;
+    font-size: 24px;
+  }
+  
+  .outfit-name {
+    font-style: italic;
+    margin-bottom: 24px;
+    color: #333;
+  }
+  
+  .moodboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+  }
+  
+  .moodboard-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(94, 9, 65, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .moodboard-item:hover {
+    background-color: rgba(94, 9, 65, 0.05);
+  }
+  
+  .moodboard-item.selected {
+    background-color: rgba(94, 9, 65, 0.1);
+    border: 1px solid rgb(94, 9, 65);
+  }
+  
+  .moodboard-item h3 {
+    font-size: 18px;
+    margin: 0;
+    color: rgb(94, 9, 65);
+  }
+  
+  .moodboard-item p {
+    color: #666;
+    margin: 0;
+    font-size: 14px;
+  }
+  
+  .create-new-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: transparent;
+    border: 2px dashed rgba(94, 9, 65, 0.5);
+    color: rgb(94, 9, 65);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+  }
+  
+  .create-new-btn:hover {
+    background-color: rgba(94, 9, 65, 0.05);
+  }
+  
+  .create-new-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .create-new-form input {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(94, 9, 65, 0.3);
+    font-size: 16px;
+    outline: none;
+  }
+  
+  .create-new-form input:focus {
+    border-color: rgb(94, 9, 65);
+  }
+  
+  .button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .cancel-btn {
+    padding: 10px 15px;
+    border-radius: 8px;
+    background-color: transparent;
+    border: 1px solid #ccc;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .create-btn {
+    padding: 10px 15px;
+    border-radius: 8px;
+    background-color: rgb(94, 9, 65);
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  
+  .create-btn:disabled {
+    background-color: rgba(94, 9, 65, 0.5);
+    cursor: not-allowed;
+  }
+  
+  .add-to-board-btn {
+    padding: 5px 12px;
+    border-radius: 6px;
+    background-color: rgb(94, 9, 65);
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+  }

@@ -1,174 +1,337 @@
-/* Masonry Grid */
+/* Masonry Grid Container */
+.outfit-container {
+  padding: 20px 0;
+  width: 100%;
+}
+
+/* Masonry Grid Layout */
 .outfit-grid {
-    margin: 0 auto;
-    max-width: 1200px;
-  }
-  
-  .grid-sizer, .outfit-card {
-    width: 23%;
-  }
-  
+  margin: 0 auto;
+  width: 95%;
+  max-width: 1800px;
+}
+
+.grid-sizer,
+.outfit-card {
+  width: 20%; /* Exactly 5 per row (100/5) */
+}
+
+.outfit-card {
+  margin-bottom: 20px;
+  break-inside: avoid;
+  position: relative;
+}
+
+/* Card Image */
+.card-image-container {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.card-image-container img {
+  width: 100%;
+  display: block;
+}
+
+/* Card Info */
+.card-info {
+  padding: 12px;
+}
+
+.card-info h3 {
+  margin: 8px 0 4px;
+  font-size: 18px;
+}
+
+.card-info p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Heart Button */
+.heart-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+}
+
+/* Responsive: Keep 5 columns until mobile */
+@media (max-width: 768px) {
+  .grid-sizer,
   .outfit-card {
-    margin-bottom: 20px;
-    break-inside: avoid;
-    cursor: pointer;
+    width: 50%; /* 2 per row on tablet */
   }
-  
-  .card-image-container {
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 480px) {
+  .grid-sizer,
+  .outfit-card {
+    width: 100%; /* 1 per row on mobile */
   }
-  
-  .card-image-container img {
-    width: 100%;
-    display: block;
+}
+
+/* Heart Button */
+.heart-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: rgba(255, 255, 255, 0.9);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+
+.outfit-card:hover .heart-button {
+  opacity: 1;
+}
+
+.heart-button:hover {
+  background-color: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+}
+
+.heart-button.active {
+  opacity: 1;
+  background-color: rgb(255, 235, 241);
+}
+
+.heart-button.active svg {
+  fill: rgb(196, 3, 99);
+  stroke: rgb(196, 3, 99);
+}
+
+.heart-button svg {
+  width: 20px;
+  height: 20px;
+  transition: all 0.2s ease;
+  stroke: rgb(94, 9, 65);
+  stroke-width: 2;
+  fill: transparent;
+}
+
+/* Remove grid-sizer as we're using CSS Grid */
+.grid-sizer {
+  display: none;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1400px) {
+  .outfit-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1100px) {
+  .outfit-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .outfit-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
   }
   
   .card-info {
-    padding: 12px;
+    padding: 10px 6px;
   }
   
   .card-info h3 {
-    margin: 8px 0;
-    color: #333;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .outfit-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    width: calc(100% - 30px);
+    padding: 0 15px;
   }
   
-  .card-info p {
-    margin: 0;
-    color: #666;
+  .outfit-card {
+    margin-bottom: 15px;
   }
   
-  /* Modal Styles */
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0,0,0,0.7);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
-  }
-  
-  .modal-content {
-    background-color: white;
-    border-radius: 24px;
-    width: 90%;
-    max-width: 1200px;
-    max-height: 90vh;
-    overflow: hidden;
-    display: flex;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  }
-  
-  .modal-images {
-    flex: 1.5;
-    padding: 30px;
-  }
-  
-  .main-image {
-    border-radius: 16px;
-    overflow: hidden;
-    margin-bottom: 20px;
-    aspect-ratio: 3/4;
-  }
-  
-  .main-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .thumbnail-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-  
-  .thumbnail {
-    border-radius: 8px;
-    overflow: hidden;
-    aspect-ratio: 1/1;
-    cursor: pointer;
-    border: 1px solid #ddd;
-  }
-  
-  .thumbnail.active {
-    border: 2px solid #5e0941;
-  }
-  
-  .thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .modal-details {
-    flex: 1;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .modal-details h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    color: #5e0941;
-  }
-  
-  .user {
-    color: #888;
-    margin-bottom: 30px;
-  }
-  
-  .description-box {
-    background-color: #f9f9f9;
+  .card-image-container {
     border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 30px;
-    flex-grow: 1;
   }
   
-  .rent-button {
-    background-color: #5e0941;
-    color: white;
-    border: none;
-    padding: 16px;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    margin-top: auto;
+  .heart-button {
+    width: 32px;
+    height: 32px;
+    top: 10px;
+    right: 10px;
   }
   
-  /* Responsive */
-  @media (max-width: 1200px) {
-    .grid-sizer, .outfit-card {
-      width: 31%;
-    }
+  .heart-button svg {
+    width: 18px;
+    height: 18px;
   }
-  
-  @media (max-width: 800px) {
-    .grid-sizer, .outfit-card {
-      width: 48%;
-    }
-    
-    .modal-content {
-      flex-direction: column;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-  }
-  
-  @media (max-width: 500px) {
-    .grid-sizer, .outfit-card {
-      width: 100%;
-    }
-    
-    .modal-images, .modal-details {
-      padding: 20px;
-    }
-  }
+}
+
+/* Modal Styles (unchanged) */
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.7);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 24px;
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.modal-images {
+  flex: 1.5;
+  padding: 30px;
+}
+
+.main-image {
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  aspect-ratio: 3/4;
+}
+
+.main-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbnail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.thumbnail {
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 1/1;
+  cursor: pointer;
+  border: 1px solid #ddd;
+}
+
+.thumbnail.active {
+  border: 2px solid #5e0941;
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-details {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-details h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  color: #5e0941;
+}
+
+.user {
+  color: #888;
+  margin-bottom: 30px;
+}
+
+.description-box {
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+  flex-grow: 1;
+}
+
+.rent-button {
+  background-color: #5e0941;
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: auto;
+}
+
+/* Add to OutfitGrid.css or create new CSS file */
+.modal-content .form-group {
+  margin-bottom: 1rem;
+}
+
+.modal-content .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.modal-content .form-group input[type="date"],
+.modal-content .form-group textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.modal-content .button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.modal-content .cancel-button {
+  background: #f5f5f5;
+  color: #333;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-content .confirm-button {
+  background: #5e0941;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-content .confirm-button:hover {
+  background: #7a0b53;
+}

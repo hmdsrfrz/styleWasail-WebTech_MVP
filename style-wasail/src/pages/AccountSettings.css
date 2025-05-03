@@ -1,0 +1,151 @@
+/* src/components/AccountSettings.css */
+.account-settings-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .account-content {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    padding: 2rem;
+    margin-left: 300px;
+    overflow-y: auto;
+  }
+  
+  .account-title {
+    font-family: 'Cal Sans', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: rgb(94, 9, 65);
+    margin-bottom: 2rem;
+  }
+  
+  .account-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  .account-section {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .account-section h2 {
+    color: rgb(94, 9, 65);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+  }
+  
+  .items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .item-card {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(94, 9, 65, 0.2);
+  }
+  
+  .item-card h3 {
+    color: rgb(94, 9, 65);
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+  }
+  
+  .item-details {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .item-details p {
+    margin-bottom: 0.5rem;
+  }
+  
+  .status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  
+  .item-card.active {
+    border-left: 4px solid rgba(94, 9, 65, 0.8);
+  }
+  
+  .item-card.pending-approval {
+    border-left: 4px solid rgba(255, 193, 7, 0.8);
+  }
+  
+  .item-card.available {
+    border-left: 4px solid rgba(40, 167, 69, 0.8);
+  }
+  
+  .item-card.rented {
+    border-left: 4px solid rgba(108, 117, 125, 0.8);
+  }
+  
+  .extension-request,
+  .rental-requests {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: rgba(94, 9, 65, 0.1);
+    border-radius: 8px;
+  }
+  
+  .extension-request p,
+  .rental-requests p {
+    margin-bottom: 0.5rem;
+  }
+  
+  .request-item {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+  }
+  
+  .extension-actions,
+  .request-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .approve-btn,
+  .decline-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+  }
+  
+  .approve-btn {
+    background-color: rgba(94, 9, 65, 0.8);
+    color: white;
+  }
+  
+  .approve-btn:hover {
+    background-color: rgb(94, 9, 65);
+  }
+  
+  .decline-btn {
+    background-color: rgba(220, 53, 69, 0.8);
+    color: white;
+  }
+  
+  .decline-btn:hover {
+    background-color: rgb(220, 53, 69);
+  }
