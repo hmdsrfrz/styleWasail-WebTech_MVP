@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import VantaBackground from "../../components/miscellaneous/VantaBackground";
-import HeroText from "../../components/miscellaneous/HeroText";
+import HeroText from "../../components/Miscellaneous/HeroText";
 import AuthButton from "../../components/authform/AuthButton";
 import AuthForm from "../../components/authform/AuthForm";
 import './Home.css';
