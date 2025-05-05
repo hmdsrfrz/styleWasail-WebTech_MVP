@@ -1,12 +1,11 @@
-
-// src/pages/Home.jsx
 import { useState } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import VantaBackground from "../components/VantaBackground";
-import HeroText from "../components/HeroText";
-import AuthButton from "../components/AuthButton";
-import AuthForm from "../components/AuthForm";
+import VantaBackground from "../../components/miscellaneous/VantaBackground";
+import HeroText from "../../components/miscellaneous/HeroText";
+import AuthButton from "../../components/authform/AuthButton";
+import AuthForm from "../../components/authform/AuthForm";
+import './Home.css';
 
 export default function Home() {
   const [showAuth, setShowAuth] = useState(false);
@@ -26,23 +25,10 @@ export default function Home() {
   };
 
   return (
-    <div style={{
-      position: 'relative',
-      width: '100vw',
-      height: '100vh',
-      overflow: 'hidden'
-    }}>
+    <div className="home-container">
       <VantaBackground />
       
-      <div style={{
-        position: 'relative',
-        zIndex: 1,
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}>
+      <div className="content-wrapper">
         <AnimatePresence mode='wait'>
           {!showAuth ? (
             <Motion.div
@@ -50,32 +36,17 @@ export default function Home() {
               initial={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '2rem'
-              }}
+              className="hero-content"
             >
               <HeroText />
-              <div style={{ display: 'flex', gap: '1rem' }}>
+              <div className="auth-buttons">
                 <AuthButton onClick={handleAuthClick} />
                 {/* Temporary dev button - remove in production */}
                 <Motion.button
                   onClick={handleTempLogin}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  style={{
-                    padding: "12px 24px",
-                    borderRadius: "12px",
-                    border: "2px solid #000",
-                    backgroundColor: "rgba(94, 9, 65, 0.8)",
-                    color: "white",
-                    fontWeight: "600",
-                    fontSize: "16px",
-                    cursor: "pointer",
-                    boxShadow: "4px 4px 0px 0px rgba(0,0,0,0.2)",
-                  }}
+                  className="dev-button"
                 >
                   Dev: Go to Dashboard
                 </Motion.button>

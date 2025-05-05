@@ -1,8 +1,8 @@
 import { motion as Motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import VantaBackground from '../components/VantaBackground';
-import Navbar from '../components/Navbar';
+import VantaBackground from '../../components/miscellaneous/VantaBackground';
+import Navbar from '../../components/miscellaneous/Navbar';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './RentingDashboard.css';

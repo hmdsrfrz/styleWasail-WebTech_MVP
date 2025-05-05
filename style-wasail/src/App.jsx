@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import UserHome from "./pages/UserHome";
-import Moodboards from "./pages/Moodboards";
-import MoodboardDetails from "./pages/MoodboardDetails";
-import Renting from "./pages/RentingDashboard";
-import Account from "./pages/AccountSettings";
+import Home from "./pages/main/Home";
+import UserHome from "./pages/main/UserHome";
+import Moodboards from "./pages/moodboard/Moodboards";
+import MoodboardDetails from "./pages/moodboard/MoodboardDetails";
+import Renting from "./pages/renting-dashboard/RentingDashboard";
+import Account from "./pages/account-settings/AccountSettings";
 import { MoodboardProvider } from "./context/MoodboardContext";
 
 export default function App() {

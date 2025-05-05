@@ -1,7 +1,7 @@
 import { motion as Motion } from 'framer-motion';
 import { useState } from 'react';
-import VantaBackground from '../components/VantaBackground';
-import Navbar from '../components/Navbar';
+import VantaBackground from '../../components/miscellaneous/VantaBackground';
+import Navbar from '../../components/miscellaneous/Navbar';
 import './AccountSettings.css';
 
 export default function AccountSettings() {

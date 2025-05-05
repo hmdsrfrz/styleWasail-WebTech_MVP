@@ -1,6 +1,6 @@
 // src/components/HeroText.jsx
 import { motion as Motion } from "framer-motion";
-import '../fonts.css';
+import '../../fonts.css';
 
 const Paragraph = ({ onClick }) => {
   return (
