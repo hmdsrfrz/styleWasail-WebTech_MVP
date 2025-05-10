@@ -1,0 +1,160 @@
+.filter-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  padding: 1rem;
+}
+
+.filter-modal-content {
+  background: linear-gradient(135deg, #fff0f6 0%, #f9e6f7 100%);
+  border-radius: 18px;
+  padding: 2rem;
+  width: 95%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px 0 rgba(94, 9, 65, 0.18);
+  border: 1.5px solid #f3e6f1;
+  position: relative;
+}
+
+.filter-modal-content h2 {
+  color: rgb(94, 9, 65);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #a07ca5;
+  cursor: pointer;
+  padding: 0.5rem;
+  line-height: 1;
+  z-index: 1;
+}
+
+.close-button:hover {
+  color: #5e0941;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.filter-tag {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 1px solid rgba(94, 9, 65, 0.3);
+  background: white;
+  color: rgb(94, 9, 65);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-tag:hover {
+  background: rgba(94, 9, 65, 0.1);
+  transform: translateY(-1px);
+}
+
+.filter-tag.selected {
+  background: rgb(94, 9, 65);
+  color: white;
+  border-color: rgb(94, 9, 65);
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.clear-button,
+.apply-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-button {
+  background: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.apply-button {
+  background: rgb(94, 9, 65);
+  color: white;
+  border: none;
+}
+
+.clear-button:hover {
+  background: #e0e0e0;
+}
+
+.apply-button:hover {
+  background: rgb(74, 9, 55);
+}
+
+@media (max-width: 768px) {
+  .filter-modal-content {
+    padding: 1.5rem;
+  }
+
+  .filter-modal-content h2 {
+    font-size: 1.25rem;
+  }
+
+  .filter-tag {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .filter-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .clear-button,
+  .apply-button {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .filter-modal-content {
+    padding: 1rem;
+  }
+
+  .filter-modal-content h2 {
+    font-size: 1.1rem;
+  }
+
+  .filter-tag {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.7rem;
+  }
+} 

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import VantaBackground from "../../components/miscellaneous/VantaBackground";
-import HeroText from "../../components/Miscellaneous/HeroText";
+import HeroText from "../../components/miscellaneous/HeroText";
+import Navbar from "../../components/miscellaneous/Navbar";
 import AuthButton from "../../components/authform/AuthButton";
 import AuthForm from "../../components/authform/AuthForm";
 import './Home.css';
@@ -10,6 +12,7 @@ import './Home.css';
 export default function Home() {
   const [showAuth, setShowAuth] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleAuthClick = () => {
     setShowAuth(true);
@@ -19,9 +22,18 @@ export default function Home() {
     setShowAuth(false);
   };
 
-  // Temporary function to simulate successful login
-  const handleTempLogin = () => {
-    navigate('/user-home');
+  const handleTempLogin = async () => {
+    try {
+      const result = await login({
+        email: 'dev@example.com',
+        password: 'devpassword'
+      });
+      if (result.success) {
+        navigate('/user-home');
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
   return (
@@ -41,15 +53,9 @@ export default function Home() {
               <HeroText />
               <div className="auth-buttons">
                 <AuthButton onClick={handleAuthClick} />
-                {/* Temporary dev button - remove in production */}
-                <Motion.button
-                  onClick={handleTempLogin}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="dev-button"
-                >
+                <button className="dev-button" onClick={handleTempLogin}>
                   Dev: Go to Dashboard
-                </Motion.button>
+                </button>
               </div>
             </Motion.div>
           ) : (

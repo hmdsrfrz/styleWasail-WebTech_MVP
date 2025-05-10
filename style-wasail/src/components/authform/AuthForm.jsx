@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { motion as Motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import "./AuthForm.css";
 
 export default function AuthForm({ onBack }) {
   const [isLogin, setIsLogin] = useState(true);
-  const [users, setUsers] = useState([]);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [signupData, setSignupData] = useState({ 
     name: "", 
@@ -14,62 +15,59 @@ export default function AuthForm({ onBack }) {
   });
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login, register } = useAuth();
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg("");
     setSuccessMsg("");
+    setLoading(true);
     
-    const foundUser = users.find(user => 
-      user.email === loginData.email && user.password === loginData.password
-    );
-    
-    if (foundUser) {
+    try {
+      await login(loginData);
       setSuccessMsg("Login successful!");
-      setLoginData({ email: "", password: "" });
       setTimeout(() => {
-        window.location.href = '/user-home';
+        navigate('/user-home');
       }, 1000);
-    } else {
-      setErrorMsg("Invalid email or password");
+    } catch (err) {
+      setErrorMsg(err.response?.data?.message || "Invalid email or password");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSignupSubmit = (e) => {
+  const handleSignupSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg("");
     setSuccessMsg("");
+    setLoading(true);
     
     if (signupData.password !== signupData.confirmPassword) {
       setErrorMsg("Passwords don't match");
+      setLoading(false);
       return;
     }
     
     if (signupData.password.length < 6) {
       setErrorMsg("Password must be at least 6 characters");
+      setLoading(false);
       return;
     }
     
-    if (users.some(user => user.email === signupData.email)) {
-      setErrorMsg("Email already registered");
-      return;
+    try {
+      const { name, email, password } = signupData;
+      await register({ name, email, password });
+      setSuccessMsg("Account created successfully!");
+      setTimeout(() => {
+        navigate('/user-home');
+      }, 1000);
+    } catch (err) {
+      setErrorMsg(err.response?.data?.message || "Failed to create account");
+    } finally {
+      setLoading(false);
     }
-    
-    const newUser = {
-      id: Date.now(),
-      name: signupData.name,
-      email: signupData.email,
-      password: signupData.password
-    };
-    
-    setUsers([...users, newUser]);
-    setSuccessMsg("Account created successfully!");
-    setSignupData({ name: "", email: "", password: "", confirmPassword: "" });
-    
-    setTimeout(() => {
-      setIsLogin(true);
-      setSuccessMsg("");
-    }, 2000);
   };
 
   return (

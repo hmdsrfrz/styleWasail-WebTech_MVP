@@ -1,87 +1,61 @@
-// src/components/MoodboardPrompt.jsx
+// src/components/outfit/MoodboardPrompt.jsx
 import { useState, useEffect } from 'react';
 import { motion as Motion } from 'framer-motion';
+import { useMoodboards } from '../../context/MoodboardContext';
+import { useAuth } from '../../context/AuthContext';
+import './MoodboardPrompt.css';
 
 export default function MoodboardPrompt({ isOpen, onClose, outfitId, outfitTitle }) {
-  const [moodboards, setMoodboards] = useState([]);
+  const { moodboards, addMoodboard, addOutfitToMoodboard } = useMoodboards();
+  const { user } = useAuth();
   const [newBoardName, setNewBoardName] = useState("");
+  const [newBoardDescription, setNewBoardDescription] = useState("");
   const [isCreatingNew, setIsCreatingNew] = useState(false);
   const [selectedBoard, setSelectedBoard] = useState(null);
+  const [error, setError] = useState(null);
+  const [isPublic, setIsPublic] = useState(true);
 
-  // Load moodboards from localStorage
+  // Reset state when prompt opens
   useEffect(() => {
     if (isOpen) {
-      const storedMoodboards = localStorage.getItem('moodboards');
-      if (storedMoodboards) {
-        setMoodboards(JSON.parse(storedMoodboards));
-      } else {
-        // Default moodboards if none exist
-        const defaultMoodboards = [
-          { id: 1, name: "Summer Vibes", outfitCount: 12 },
-          { id: 2, name: "Office Wear", outfitCount: 8 },
-          { id: 3, name: "Evening Outfits", outfitCount: 5 },
-        ];
-        setMoodboards(defaultMoodboards);
-        localStorage.setItem('moodboards', JSON.stringify(defaultMoodboards));
-      }
-      
-      // Reset state when prompt opens
       setNewBoardName("");
+      setNewBoardDescription("");
       setIsCreatingNew(false);
       setSelectedBoard(null);
+      setError(null);
+      setIsPublic(true);
     }
   }, [isOpen]);
 
-  const handleCreateMoodboard = () => {
-    if (newBoardName.trim()) {
-      const newMoodboard = {
-        id: Date.now(),
-        name: newBoardName.trim(),
-        outfitCount: 1,
-        outfits: [{ id: outfitId, title: outfitTitle }]
-      };
-      
-      const updatedMoodboards = [...moodboards, newMoodboard];
-      setMoodboards(updatedMoodboards);
-      
-      // Save to localStorage
-      localStorage.setItem('moodboards', JSON.stringify(updatedMoodboards));
-      
-      console.log(`Added outfit ${outfitId} to new moodboard: ${newBoardName}`);
-      
-      // Close prompt after creating
-      onClose();
+  const handleCreateMoodboard = async () => {
+    try {
+      setError(null);
+      if (newBoardName.trim()) {
+        const newBoard = await addMoodboard(newBoardName, newBoardDescription, isPublic);
+        await addOutfitToMoodboard(newBoard._id, outfitId);
+        onClose();
+      }
+    } catch (err) {
+      setError('Failed to create moodboard');
+      console.error('Error creating moodboard:', err);
     }
   };
 
-  const handleAddToExisting = (boardId) => {
-    // Find the selected moodboard
-    const updatedMoodboards = moodboards.map(board => {
-      if (board.id === boardId) {
-        // Initialize outfits array if it doesn't exist
-        const outfits = board.outfits || [];
-        
-        // Add the outfit if it doesn't already exist in this moodboard
-        if (!outfits.some(outfit => outfit.id === outfitId)) {
-          const updatedBoard = {
-            ...board,
-            outfitCount: (board.outfitCount || 0) + 1,
-            outfits: [...outfits, { id: outfitId, title: outfitTitle }]
-          };
-          return updatedBoard;
-        }
-      }
-      return board;
-    });
-    
-    // Save to localStorage
-    localStorage.setItem('moodboards', JSON.stringify(updatedMoodboards));
-    
-    console.log(`Added outfit ${outfitId} to moodboard ID: ${boardId}`);
-    onClose();
+  const handleAddToExisting = async (moodboardId) => {
+    try {
+      setError(null);
+      await addOutfitToMoodboard(moodboardId, outfitId);
+      onClose();
+    } catch (err) {
+      setError('Failed to add outfit to moodboard');
+      console.error('Error adding outfit to moodboard:', err);
+    }
   };
 
   if (!isOpen) return null;
+
+  const systemMoodboard = moodboards.find(board => board.isSystem);
+  const customMoodboards = moodboards.filter(board => !board.isSystem);
 
   return (
     <Motion.div
@@ -89,17 +63,19 @@ export default function MoodboardPrompt({ isOpen, onClose, outfitId, outfitTitle
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      onClick={onClose}
     >
       <Motion.div
         className="moodboard-prompt-content"
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.9, y: 20 }}
-        onClick={(e) => e.stopPropagation()}
       >
-        <h2>Save to Moodboard</h2>
+        <h2>Add to Moodboard</h2>
         <p className="outfit-name">"{outfitTitle}"</p>
+
+        {error && (
+          <p style={{ color: 'red', marginBottom: '1rem' }}>{error}</p>
+        )}
 
         {isCreatingNew ? (
           <div className="create-new-form">
@@ -110,6 +86,31 @@ export default function MoodboardPrompt({ isOpen, onClose, outfitId, outfitTitle
               onChange={(e) => setNewBoardName(e.target.value)}
               autoFocus
             />
+            <textarea
+              placeholder="Description (optional)"
+              value={newBoardDescription}
+              onChange={(e) => setNewBoardDescription(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                borderRadius: '10px',
+                border: '1px solid #ccc',
+                fontSize: '1rem',
+                minHeight: '100px',
+                resize: 'vertical',
+                marginTop: '1rem'
+              }}
+            />
+            <div style={{ marginTop: '1rem' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <input
+                  type="checkbox"
+                  checked={isPublic}
+                  onChange={(e) => setIsPublic(e.target.checked)}
+                />
+                Make this moodboard public
+              </label>
+            </div>
             <div className="button-group">
               <button className="cancel-btn" onClick={() => setIsCreatingNew(false)}>
                 Cancel
@@ -126,21 +127,53 @@ export default function MoodboardPrompt({ isOpen, onClose, outfitId, outfitTitle
         ) : (
           <>
             <div className="moodboard-list">
-              {moodboards.map(board => (
+              {/* System Moodboard */}
+              {systemMoodboard && (
                 <Motion.div
-                  key={board.id}
-                  className={`moodboard-item ${selectedBoard === board.id ? 'selected' : ''}`}
+                  key={systemMoodboard._id}
+                  className={`moodboard-item ${selectedBoard === systemMoodboard._id ? 'selected' : ''}`}
                   whileHover={{ scale: 1.02 }}
-                  onClick={() => setSelectedBoard(board.id)}
+                  onClick={() => setSelectedBoard(systemMoodboard._id)}
+                >
+                  <div>
+                    <h3>{systemMoodboard.name}</h3>
+                    <p>{systemMoodboard.outfits?.length || 0} items</p>
+                    <p style={{ 
+                      color: 'rgba(94, 9, 65, 0.6)', 
+                      fontSize: '0.9rem',
+                      marginTop: '0.5rem',
+                      fontStyle: 'italic'
+                    }}>
+                      System Moodboard
+                    </p>
+                  </div>
+                  {selectedBoard === systemMoodboard._id && (
+                    <button 
+                      className="add-to-board-btn"
+                      onClick={() => handleAddToExisting(systemMoodboard._id)}
+                    >
+                      Add
+                    </button>
+                  )}
+                </Motion.div>
+              )}
+
+              {/* Custom Moodboards */}
+              {customMoodboards.map(board => (
+                <Motion.div
+                  key={board._id}
+                  className={`moodboard-item ${selectedBoard === board._id ? 'selected' : ''}`}
+                  whileHover={{ scale: 1.02 }}
+                  onClick={() => setSelectedBoard(board._id)}
                 >
                   <div>
                     <h3>{board.name}</h3>
-                    <p>{board.outfitCount} items</p>
+                    <p>{board.outfits?.length || 0} items</p>
                   </div>
-                  {selectedBoard === board.id && (
+                  {selectedBoard === board._id && (
                     <button 
                       className="add-to-board-btn"
-                      onClick={() => handleAddToExisting(board.id)}
+                      onClick={() => handleAddToExisting(board._id)}
                     >
                       Add
                     </button>
@@ -149,12 +182,14 @@ export default function MoodboardPrompt({ isOpen, onClose, outfitId, outfitTitle
               ))}
             </div>
             
-            <button 
-              className="create-new-btn"
-              onClick={() => setIsCreatingNew(true)}
-            >
-              + Create new moodboard
-            </button>
+            {user && (
+              <button 
+                className="create-new-btn"
+                onClick={() => setIsCreatingNew(true)}
+              >
+                + Create new moodboard
+              </button>
+            )}
           </>
         )}
       </Motion.div>

@@ -1,0 +1,152 @@
+.user-home-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .navbar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 300px;
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    z-index: 100;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .app-title {
+    font-family: 'Cal Sans', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: rgb(94, 9, 65);
+    margin-bottom: 2rem;
+    padding-left: 1rem;
+  }
+  
+  .nav-link {
+    font-family: 'Merriweather', serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: rgb(94, 9, 65);
+    text-decoration: none;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: block;
+  }
+  
+  .nav-link.active {
+    background-color: rgba(94, 9, 65, 0.1);
+  }
+  
+  .main-content {
+    margin-left: 300px;
+    padding: 2rem;
+    height: 100%;
+    overflow-y: auto;
+  }
+  
+  .create-button {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: rgb(94, 9, 65);
+    color: white;
+    border: none;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .filter-button {
+    position: fixed;
+    right: 20px;
+    bottom: 90px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: rgb(94, 9, 65);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .filter-button svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .create-button:hover,
+  .filter-button:hover {
+    transform: scale(1.1);
+  }
+  
+  .create-button:active,
+  .filter-button:active {
+    transform: scale(0.95);
+  }
+
+@media (max-width: 900px) {
+  .main-content {
+    margin-left: 0;
+    padding: 1rem;
+  }
+  .navbar {
+    width: 100vw;
+    height: auto;
+    flex-direction: row;
+    padding: 1rem 0.5rem;
+    position: static;
+  }
+}
+
+@media (max-width: 600px) {
+  .main-content {
+    padding: 0.5rem;
+  }
+  .navbar {
+    flex-direction: column;
+    padding: 0.5rem;
+    width: 100vw;
+    height: auto;
+  }
+  .app-title {
+    font-size: 1.1rem;
+    padding-left: 0.5rem;
+  }
+  .nav-link {
+    font-size: 1rem;
+    padding: 0.5rem 0.5rem;
+  }
+  .create-button,
+  .filter-button {
+    width: 50px;
+    height: 50px;
+  }
+  .filter-button {
+    bottom: 80px;
+  }
+  .filter-button svg {
+    width: 20px;
+    height: 20px;
+  }
+}

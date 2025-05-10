@@ -1,0 +1,174 @@
+.outfit-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.outfit-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.outfit-image {
+  position: relative;
+  padding-top: 133%;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.outfit-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.outfit-card:hover .outfit-image img {
+  transform: scale(1.05);
+}
+
+.outfit-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.outfit-card:hover .outfit-overlay {
+  opacity: 1;
+}
+
+.like-button {
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.like-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.like-button i {
+  color: #dc3545;
+  font-size: 1.3rem;
+  transition: transform 0.3s ease;
+}
+
+.like-button:hover i {
+  transform: scale(1.1);
+}
+
+.like-button span {
+  font-size: 0.85rem;
+  color: #444;
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+.like-button.active i {
+  color: #dc3545;
+}
+
+.outfit-info {
+  padding: 1.25rem;
+  background: white;
+}
+
+.outfit-info h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+  color: #222;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.outfit-price {
+  font-weight: 700;
+  color: #007bff;
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+}
+
+.outfit-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.outfit-category {
+  background: #f8f9fa;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  font-weight: 500;
+  color: #444;
+}
+
+.outfit-views {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #666;
+}
+
+.outfit-views i {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+@media (max-width: 900px) {
+  .outfit-card {
+    padding: 1rem 0.5rem;
+  }
+  .card-image-container {
+    width: 90px;
+    height: 120px;
+    margin-right: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .outfit-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.7rem 0.5rem;
+  }
+  .card-image-container {
+    margin: 0 auto 1rem auto;
+    width: 100%;
+    height: 180px;
+  }
+  .outfit-card h3 {
+    font-size: 1rem;
+  }
+  .outfit-card p {
+    font-size: 0.9rem;
+  }
+} 

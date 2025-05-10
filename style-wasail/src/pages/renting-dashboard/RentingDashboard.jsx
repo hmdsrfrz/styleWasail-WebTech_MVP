@@ -1,241 +1,433 @@
 import { motion as Motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 import VantaBackground from '../../components/miscellaneous/VantaBackground';
 import Navbar from '../../components/miscellaneous/Navbar';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './RentingDashboard.css';
+import { useAuth } from '../../context/AuthContext';
+import { rentalAPI } from '../../services/api';
+import { formatCurrency, formatDate } from '../../utils/formatters';
 
 export default function RentingDashboard() {
-  const location = useLocation();
-  const [rentals, setRentals] = useState([
-    { 
-      id: 1, 
-      item: 'Designer Dress', 
-      description: 'Elegant evening dress with sequin details',
-      components: [
-        { type: 'Dress', description: 'Black sequin evening dress' }
-      ],
-      status: 'Active', 
-      price: '$15/day',
-      startDate: '05/01/2023',
-      endDate: '05/08/2023',
-      originalEndDate: '05/08/2023'
-    },
-    { 
-      id: 2, 
-      item: 'Vintage Jacket', 
-      description: 'Leather jacket from the 80s',
-      components: [
-        { type: 'Jacket', description: 'Brown leather jacket' }
-      ],
-      status: 'Pending', 
-      price: '$10/day',
-      startDate: '05/03/2023',
-      endDate: '05/10/2023',
-      originalEndDate: '05/10/2023'
-    },
-    { 
-      id: 3, 
-      item: 'Silk Scarf', 
-      description: 'Hand-painted silk scarf',
-      components: [
-        { type: 'Scarf', description: 'Blue and gold patterned scarf' }
-      ],
-      status: 'Completed', 
-      price: '$5/day',
-      startDate: '04/20/2023',
-      endDate: '04/27/2023',
-      originalEndDate: '04/27/2023'
-    }
-  ]);
-
+  const { user } = useAuth();
+  const [rentals, setRentals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [receiptFiles, setReceiptFiles] = useState({});
+  const [viewingReceipt, setViewingReceipt] = useState(null);
   const [showExtensionModal, setShowExtensionModal] = useState(false);
   const [selectedRental, setSelectedRental] = useState(null);
   const [extensionStartDate, setExtensionStartDate] = useState(null);
   const [extensionEndDate, setExtensionEndDate] = useState(null);
+  const [actionLoading, setActionLoading] = useState(null);
+  const [actionError, setActionError] = useState(null);
+  const [extensionLoading, setExtensionLoading] = useState(false);
+  const [extensionError, setExtensionError] = useState(null);
+  const [cancelLoading, setCancelLoading] = useState(null);
+  const [cancelError, setCancelError] = useState(null);
+  const [uploadLoading, setUploadLoading] = useState(null);
+  const [uploadError, setUploadError] = useState(null);
 
   useEffect(() => {
-    if (location.state?.newRental) {
-      setRentals([location.state.newRental, ...rentals]);
-    }
-  }, [location.state]);
+    fetchRentals();
+  }, []);
 
-  const handleExtendClick = (rental) => {
+  async function fetchRentals() {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await rentalAPI.getMyRentals();
+      const rentalsArray = Array.isArray(res.data)
+        ? res.data
+        : Array.isArray(res.data.data)
+          ? res.data.data
+          : [];
+      setRentals(rentalsArray);
+      console.log('Rentals API response:', res);
+    } catch (err) {
+      console.error('Error fetching rentals:', err);
+      setError(err.response?.data?.message || 'Failed to load rentals.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Split rentals into renting and lending
+  const rentingItems = rentals.filter(r => user && String(r.renter._id) === String(user._id));
+  const lendingItems = rentals.filter(r => user && String(r.owner._id) === String(user._id));
+
+  async function handleReceiptUpload(rentalId, file) {
+    if (!file) return;
+    setUploadLoading(rentalId);
+    setUploadError(null);
+    try {
+      const formData = new FormData();
+      formData.append('receipt', file);
+
+      await rentalAPI.uploadReceipt(rentalId, formData);
+      await fetchRentals();
+    } catch (err) {
+      console.error('Receipt upload error:', err);
+      setUploadError('Failed to upload receipt. Please try again.');
+    } finally {
+      setUploadLoading(null);
+    }
+  }
+
+  function handleExtendClick(rental) {
     setSelectedRental(rental);
-    // Set default extension dates (current end date + 1 day to +7 days)
-    const currentEndDate = new Date(rental.endDate);
+    const currentEndDate = new Date(rental.rentalPeriod.endDate);
     const defaultStartDate = new Date(currentEndDate);
     defaultStartDate.setDate(currentEndDate.getDate() + 1);
     const defaultEndDate = new Date(defaultStartDate);
     defaultEndDate.setDate(defaultStartDate.getDate() + 7);
-    
     setExtensionStartDate(defaultStartDate);
     setExtensionEndDate(defaultEndDate);
     setShowExtensionModal(true);
-  };
+  }
 
-  const handleExtensionSubmit = () => {
-    if (!selectedRental || !extensionStartDate || !extensionEndDate) return;
-
-    const updatedRentals = rentals.map(rental => {
-      if (rental.id === selectedRental.id) {
-        return {
-          ...rental,
-          status: 'Pending Extension',
-          extensionRequest: {
-            startDate: extensionStartDate.toLocaleDateString('en-US'),
-            endDate: extensionEndDate.toLocaleDateString('en-US'),
-            price: rental.price // In real app, calculate price difference
-          }
-        };
-      }
-      return rental;
-    });
-
-    setRentals(updatedRentals);
-    setShowExtensionModal(false);
-    // In real app, you would send this request to the renter/backend
-  };
-
-  const formatDate = (dateString) => {
+  function formatDate(dateString) {
+    if (!dateString) return '';
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('en-US', options);
-  };
+  }
+
+  async function handleApproveRequest(rentalId) {
+    setActionLoading(rentalId);
+    setActionError(null);
+    try {
+      const response = await rentalAPI.acceptRental(rentalId);
+      await fetchRentals();
+    } catch (err) {
+      setActionError(err.response?.data?.message || 'Failed to approve request.');
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  async function handleDeclineRequest(rentalId) {
+    setActionLoading(rentalId);
+    setActionError(null);
+    try {
+      await rentalAPI.declineRental(rentalId);
+      await fetchRentals();
+    } catch (err) {
+      setActionError('Failed to decline request.');
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  async function handleExtensionSubmit() {
+    if (!selectedRental || !extensionStartDate || !extensionEndDate) return;
+    setExtensionLoading(true);
+    setExtensionError(null);
+    try {
+      await rentalAPI.requestExtension(selectedRental._id, {
+        startDate: extensionStartDate,
+        endDate: extensionEndDate
+      });
+      setShowExtensionModal(false);
+      await fetchRentals();
+    } catch (err) {
+      setExtensionError('Failed to request extension.');
+    } finally {
+      setExtensionLoading(false);
+    }
+  }
+
+  async function handleExtensionReceiptUpload(rentalId, file) {
+    if (!file) return;
+    setUploadLoading(rentalId);
+    setUploadError(null);
+    try {
+      const formData = new FormData();
+      formData.append('receipt', file);
+
+      await rentalAPI.uploadExtensionReceipt(rentalId, formData);
+      await fetchRentals();
+    } catch (err) {
+      console.error('Extension receipt upload error:', err);
+      setUploadError('Failed to upload extension receipt. Please try again.');
+    } finally {
+      setUploadLoading(null);
+    }
+  }
+
+  async function handleAcceptExtension(rentalId) {
+    setActionLoading(rentalId);
+    setActionError(null);
+    try {
+      await rentalAPI.acceptExtension(rentalId);
+      await fetchRentals();
+    } catch (err) {
+      setActionError(err.response?.data?.message || 'Failed to accept extension.');
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  async function handleDeclineExtension(rentalId) {
+    setActionLoading(rentalId);
+    setActionError(null);
+    try {
+      await rentalAPI.declineExtension(rentalId);
+      await fetchRentals();
+    } catch (err) {
+      setActionError('Failed to decline extension.');
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  function calculateExtensionAmount(rental) {
+    if (!rental || !rental.extensionRequest) return 0;
+    const days = rental.extensionRequest.endDate && rental.extensionRequest.startDate
+      ? Math.ceil((new Date(rental.extensionRequest.endDate) - new Date(rental.extensionRequest.startDate)) / (1000 * 60 * 60 * 24))
+      : 0;
+    return rental.outfit.dailyPrice * days;
+  }
+
+  function calculateTotalAmount(rental) {
+    if (!rental) return 0;
+    const baseAmount = rental.payment.totalAmount || 0;
+    const extensionAmount = calculateExtensionAmount(rental);
+    return baseAmount + extensionAmount;
+  }
+
+  if (loading) return <div className="account-content">Loading...</div>;
+  if (error) return <div className="account-content" style={{ color: 'red' }}>{error}</div>;
 
   return (
     <div className="renting-dashboard-container">
       <Navbar />
       <VantaBackground />
-      
       <Motion.div
         className="dashboard-content"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        <Motion.h1 className="dashboard-title">
-          Renting Dashboard
-        </Motion.h1>
-        
-        <div className="rentals-table-container">
-          <table className="rentals-table">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Rental Period</th>
-                <th>Price</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rentals.map((rental) => (
-                <Motion.tr 
-                  key={rental.id}
-                  className="rental-row"
-                  whileHover={{ backgroundColor: 'rgba(94, 9, 65, 0.1)' }}
-                >
-                  <td>{rental.item}</td>
-                  <td>
-                    {rental.description}
-                    {rental.components && (
-                      <div className="components-list">
-                        {rental.components.map((comp, i) => (
-                          <div key={i}>
-                            <strong>{comp.type}:</strong> {comp.description}
+        <Motion.h1 className="dashboard-title">Renting Dashboard</Motion.h1>
+        {/* Items You're Renting section */}
+        <div className="account-section">
+          <h2>Items You're Renting</h2>
+          <div className="items-list">
+            {rentingItems.length === 0 ? (
+              <div style={{ color: '#888', padding: '1rem' }}>You are not renting any items right now.</div>
+            ) : rentingItems.map(item => (
+              <div key={item._id} className={`item-card ${item.status.toLowerCase().replace(/ /g, '-')}`}> 
+                <h3>{item.outfit.title}</h3>
+                <p>{item.outfit.description}</p>
+                <div className="item-details">
+                  <p><strong>Status:</strong> <span className="status-badge">{item.status}</span></p>
+                  <p><strong>Owner:</strong> {item.owner.name}</p>
+                  <p><strong>Period:</strong> {formatDate(item.rentalPeriod.startDate)} to {formatDate(item.rentalPeriod.endDate)}</p>
+                  <p><strong>Price:</strong> {formatCurrency(item.outfit.dailyPrice)}/day</p>
+                  <p><strong>Total Rent:</strong> {formatCurrency(calculateTotalAmount(item))}</p>
+                  
+                  {/* Receipt Upload Section for Renters */}
+                  {item.status === 'pending' && (
+                    <div className="receipt-upload-section">
+                      {!item.payment?.receiptImage ? (
+                        <>
+                          <div className="receipt-upload">
+                            <label htmlFor={`upload-receipt-${item._id}`} className="upload-btn">
+                              {uploadLoading === item._id ? 'Uploading...' : 'Upload Receipt'}
+                              <input
+                                id={`upload-receipt-${item._id}`}
+                                type="file"
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                onChange={e => handleReceiptUpload(item._id, e.target.files[0])}
+                                disabled={uploadLoading === item._id}
+                              />
+                            </label>
+                            <p className="receipt-message" style={{ color: '#ff0000', marginTop: '0.5rem' }}>
+                              Please upload a receipt for rental approval
+                            </p>
+                            {uploadError && uploadLoading === item._id && (
+                              <div style={{ color: 'red', marginTop: '0.5rem' }}>{uploadError}</div>
+                            )}
                           </div>
-                        ))}
-                      </div>
-                    )}
-                  </td>
-                  <td>
-                    <span className={`status-badge ${rental.status.toLowerCase().replace(' ', '-')}`}>
-                      {rental.status}
-                    </span>
-                  </td>
-                  <td>
-                    {formatDate(rental.startDate)} - {formatDate(rental.endDate)}
-                    {rental.extensionRequest && (
-                      <div className="extension-request">
-                        <small>Extension requested: {formatDate(rental.extensionRequest.startDate)} to {formatDate(rental.extensionRequest.endDate)}</small>
-                      </div>
-                    )}
-                  </td>
-                  <td>{rental.price}</td>
-                  <td>
-                    {!['Completed', 'Pending', 'Pending Extension'].includes(rental.status) && (
-                      <button 
-                        className="extend-button"
-                        onClick={() => handleExtendClick(rental)}
-                      >
-                        Extend
-                      </button>
-                    )}
-                  </td>
-                </Motion.tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Motion.div>
+                        </>
+                      ) : (
+                        <div className="receipt-section">
+                          {viewingReceipt === item._id ? (
+                            <>
+                              <img src={item.payment.receiptImage} alt="Receipt" className="receipt-image" />
+                              <button className="close-btn" onClick={() => setViewingReceipt(null)}>Close</button>
+                            </>
+                          ) : (
+                            <button className="see-receipt-btn" onClick={() => setViewingReceipt(item._id)}>See Receipt</button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
 
-      {/* Extension Modal */}
-      {showExtensionModal && selectedRental && (
-        <div className="modal-overlay">
-          <Motion.div 
-            className="modal-content"
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-          >
-            <h2>Extend Rental Period</h2>
-            <p>Request to extend rental for: <strong>{selectedRental.item}</strong></p>
-            
-            <div className="date-picker-group">
-              <label>Extension Start Date:</label>
-              <DatePicker
-                selected={extensionStartDate}
-                onChange={(date) => setExtensionStartDate(date)}
-                minDate={new Date(selectedRental.endDate)}
-                selectsStart
-                startDate={extensionStartDate}
-                endDate={extensionEndDate}
-                className="date-picker"
-              />
-            </div>
-            
-            <div className="date-picker-group">
-              <label>Extension End Date:</label>
-              <DatePicker
-                selected={extensionEndDate}
-                onChange={(date) => setExtensionEndDate(date)}
-                minDate={extensionStartDate}
-                selectsEnd
-                startDate={extensionStartDate}
-                endDate={extensionEndDate}
-                className="date-picker"
-              />
-            </div>
-            
-            <div className="modal-actions">
-              <button 
-                className="cancel-button"
-                onClick={() => setShowExtensionModal(false)}
-              >
-                Cancel
-              </button>
-              <button 
-                className="submit-button"
-                onClick={handleExtensionSubmit}
-                disabled={!extensionStartDate || !extensionEndDate}
-              >
-                Request Extension
-              </button>
-            </div>
-          </Motion.div>
+                  {/* Extension and Cancel Request buttons for pending/active rentals */}
+                  {item.status === 'active' && !item.extensionRequest?.requested && (
+                    <button
+                      className="extend-button"
+                      onClick={() => handleExtendClick(item)}
+                    >
+                      Request Extension
+                    </button>
+                  )}
+                  {item.status === 'pending' && (
+                    <button
+                      className="decline-btn"
+                      onClick={() => handleCancelRequest(item._id)}
+                      disabled={cancelLoading === item._id}
+                    >
+                      {cancelLoading === item._id ? 'Cancelling...' : 'Cancel Request'}
+                    </button>
+                  )}
+                  {cancelError && cancelLoading === item._id && (
+                    <div style={{ color: 'red', marginTop: '0.5rem' }}>{cancelError}</div>
+                  )}
+                  {item.extensionRequest?.requested && (
+                    <div className="extension-status">
+                      <p><strong>Extension Status:</strong> {item.extensionRequest.status}</p>
+                      <p>Requested: {formatDate(item.extensionRequest.startDate)} to {formatDate(item.extensionRequest.endDate)}</p>
+                      <p><strong>Extension Total:</strong> {formatCurrency(calculateExtensionAmount(item))}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      )}
+        {/* Items You're Lending section */}
+        <div className="account-section">
+          <h2>Items You're Lending</h2>
+          <div className="items-list">
+            {lendingItems.length === 0 ? (
+              <div style={{ color: '#888', padding: '1rem' }}>You are not lending any items right now.</div>
+            ) : lendingItems.map(item => (
+              <div key={item._id} className={`item-card ${item.status.toLowerCase().replace(/ /g, '-')}`}> 
+                <h3>{item.outfit.title}</h3>
+                <p>{item.outfit.description}</p>
+                <div className="item-details">
+                  <p><strong>Status:</strong> <span className="status-badge">{item.status}</span></p>
+                  <p><strong>Renter:</strong> {item.renter.name}</p>
+                  <p><strong>Period:</strong> {formatDate(item.rentalPeriod.startDate)} to {formatDate(item.rentalPeriod.endDate)}</p>
+                  <p><strong>Price:</strong> {formatCurrency(item.outfit.dailyPrice)}/day</p>
+                  <p><strong>Total Rent:</strong> {formatCurrency(calculateTotalAmount(item))}</p>
+                  
+                  {/* Receipt Section for Lenders */}
+                  {item.status === 'pending' && (
+                    <div className="receipt-section">
+                      {!item.payment?.receiptImage ? (
+                        <div className="receipt-status">
+                          <p className="receipt-message">Waiting for receipt upload</p>
+                        </div>
+                      ) : (
+                        <div className="receipt-view">
+                          {viewingReceipt === item._id ? (
+                            <>
+                              <img src={item.payment.receiptImage} alt="Receipt" className="receipt-image" />
+                              <button className="close-btn" onClick={() => setViewingReceipt(null)}>Close</button>
+                            </>
+                          ) : (
+                            <button className="see-receipt-btn" onClick={() => setViewingReceipt(item._id)}>
+                              View Receipt
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Only show Approve/Decline for pending rentals */}
+                  {item.status === 'pending' && (
+                    <div className="request-actions">
+                      <button
+                        className="approve-btn"
+                        onClick={() => handleApproveRequest(item._id)}
+                        disabled={actionLoading === item._id || !item.payment?.receiptImage}
+                        title={!item.payment?.receiptImage ? "Cannot approve until receipt is uploaded" : ""}
+                      >
+                        {actionLoading === item._id ? 'Approving...' : 'Approve'}
+                      </button>
+                      <button
+                        className="decline-btn"
+                        onClick={() => handleDeclineRequest(item._id)}
+                        disabled={actionLoading === item._id}
+                      >
+                        {actionLoading === item._id ? 'Declining...' : 'Decline'}
+                      </button>
+                      {actionError && actionLoading === item._id && (
+                        <div style={{ color: 'red', marginTop: '0.5rem' }}>{actionError}</div>
+                      )}
+                      {!item.payment?.receiptImage && (
+                        <div style={{ color: '#ff9800', marginTop: '0.5rem' }}>
+                          Waiting for receipt upload before approval
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Extension Modal */}
+        {showExtensionModal && selectedRental && (
+          <div className="modal-overlay">
+            <Motion.div 
+              className="modal-content"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+            >
+              <h2>Request Extension</h2>
+              <p>Request to extend rental for: <strong>{selectedRental.outfit.title}</strong></p>
+              <div className="date-picker-group">
+                <label>Extension Start Date:</label>
+                <DatePicker
+                  selected={extensionStartDate}
+                  onChange={(date) => setExtensionStartDate(date)}
+                  minDate={new Date(selectedRental.rentalPeriod.endDate)}
+                  selectsStart
+                  startDate={extensionStartDate}
+                  endDate={extensionEndDate}
+                  className="date-picker"
+                />
+              </div>
+              <div className="date-picker-group">
+                <label>Extension End Date:</label>
+                <DatePicker
+                  selected={extensionEndDate}
+                  onChange={(date) => setExtensionEndDate(date)}
+                  minDate={extensionStartDate}
+                  selectsEnd
+                  startDate={extensionStartDate}
+                  endDate={extensionEndDate}
+                  className="date-picker"
+                />
+              </div>
+              {extensionError && <div style={{ color: 'red', marginTop: '0.5rem' }}>{extensionError}</div>}
+              <div className="modal-actions">
+                <button 
+                  className="cancel-button"
+                  onClick={() => setShowExtensionModal(false)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="submit-button"
+                  onClick={handleExtensionSubmit}
+                  disabled={!extensionStartDate || !extensionEndDate || extensionLoading}
+                >
+                  {extensionLoading ? 'Requesting...' : 'Request Extension'}
+                </button>
+              </div>
+            </Motion.div>
+          </div>
+        )}
+      </Motion.div>
     </div>
   );
 }

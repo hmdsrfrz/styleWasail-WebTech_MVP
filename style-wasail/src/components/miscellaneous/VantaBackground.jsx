@@ -26,13 +26,13 @@ export default function VantaBackground() {
       });
 
       const handleResize = () => {
+        if (!vantaRef.current || !vantaEffect) return;
+        
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-          if (vantaEffect) {
-            vantaEffect.resize();
-            vantaRef.current.style.width = window.innerWidth + 'px';
-            vantaRef.current.style.height = window.innerHeight + 'px';
-          }
+          vantaEffect.resize();
+          vantaRef.current.style.width = window.innerWidth + 'px';
+          vantaRef.current.style.height = window.innerHeight + 'px';
         }, 100);
       };
 

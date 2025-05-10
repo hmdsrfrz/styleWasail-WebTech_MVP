@@ -5,151 +5,160 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.5);
     z-index: 1000;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
   }
   
   .moodboard-prompt-content {
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(12px);
-    border-radius: 24px;
-    padding: 30px;
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
     width: 90%;
     max-width: 500px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-height: 80vh;
+    overflow-y: auto;
   }
   
   .moodboard-prompt-content h2 {
-    color: rgb(94, 9, 65);
-    margin-bottom: 10px;
-    font-family: 'Cal Sans', sans-serif;
-    font-size: 24px;
+    margin: 0 0 1rem;
+    color: #5e0941;
+    font-size: 1.5rem;
   }
   
   .outfit-name {
+    color: #666;
+    margin-bottom: 1.5rem;
     font-style: italic;
-    margin-bottom: 24px;
-    color: #333;
   }
   
   .moodboard-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    max-height: 300px;
-    overflow-y: auto;
-    margin-bottom: 20px;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
   }
   
   .moodboard-item {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: 15px;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #ddd;
     border-radius: 10px;
-    background-color: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(94, 9, 65, 0.2);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
   }
   
   .moodboard-item:hover {
+    border-color: #5e0941;
     background-color: rgba(94, 9, 65, 0.05);
   }
   
   .moodboard-item.selected {
+    border-color: #5e0941;
     background-color: rgba(94, 9, 65, 0.1);
-    border: 1px solid rgb(94, 9, 65);
   }
   
   .moodboard-item h3 {
-    font-size: 18px;
     margin: 0;
-    color: rgb(94, 9, 65);
+    color: #333;
+    font-size: 1.1rem;
   }
   
   .moodboard-item p {
+    margin: 0.25rem 0 0;
     color: #666;
-    margin: 0;
-    font-size: 14px;
+    font-size: 0.9rem;
+  }
+  
+  .add-to-board-btn {
+    background-color: #5e0941;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .add-to-board-btn:hover {
+    background-color: #4a0733;
   }
   
   .create-new-btn {
-    display: block;
     width: 100%;
-    padding: 12px;
-    border-radius: 8px;
     background-color: transparent;
-    border: 2px dashed rgba(94, 9, 65, 0.5);
-    color: rgb(94, 9, 65);
-    font-weight: 600;
+    color: #5e0941;
+    border: 2px dashed #5e0941;
+    padding: 0.75rem;
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-top: 10px;
+    font-size: 1rem;
   }
   
   .create-new-btn:hover {
-    background-color: rgba(94, 9, 65, 0.05);
+    background-color: rgba(94, 9, 65, 0.1);
   }
   
   .create-new-form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 1rem;
   }
   
-  .create-new-form input {
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid rgba(94, 9, 65, 0.3);
-    font-size: 16px;
+  .create-new-form input[type="text"] {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 1rem;
+  }
+  
+  .create-new-form input[type="text"]:focus {
     outline: none;
-  }
-  
-  .create-new-form input:focus {
-    border-color: rgb(94, 9, 65);
+    border-color: #5e0941;
   }
   
   .button-group {
     display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+    gap: 1rem;
+    margin-top: 1rem;
   }
   
   .cancel-btn {
-    padding: 10px 15px;
-    border-radius: 8px;
-    background-color: transparent;
-    border: 1px solid #ccc;
+    flex: 1;
+    background-color: #f5f5f5;
     color: #333;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 10px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cancel-btn:hover {
+    background-color: #e5e5e5;
   }
   
   .create-btn {
-    padding: 10px 15px;
-    border-radius: 8px;
-    background-color: rgb(94, 9, 65);
-    border: none;
+    flex: 1;
+    background-color: #5e0941;
     color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 10px;
     cursor: pointer;
-    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+  
+  .create-btn:hover {
+    background-color: #4a0733;
   }
   
   .create-btn:disabled {
-    background-color: rgba(94, 9, 65, 0.5);
+    background-color: #ccc;
     cursor: not-allowed;
-  }
-  
-  .add-to-board-btn {
-    padding: 5px 12px;
-    border-radius: 6px;
-    background-color: rgb(94, 9, 65);
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-weight: 600;
   }

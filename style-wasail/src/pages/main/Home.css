@@ -46,3 +46,35 @@
   .dev-button:active {
     transform: scale(0.95);
   }
+
+  /* Tablet and smaller screens */
+  @media (max-width: 768px) {
+    .hero-content {
+      transform: scale(0.85);
+    }
+
+    .dev-button {
+      padding: 10px 20px;
+      font-size: 14px;
+      border-width: 1.5px;
+      box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.2);
+    }
+  }
+
+  /* Mobile screens */
+  @media (max-width: 480px) {
+    .hero-content {
+      transform: scale(0.7);
+    }
+
+    .auth-buttons {
+      flex-direction: column;
+    }
+
+    .dev-button {
+      padding: 8px 16px;
+      font-size: 13px;
+      border-width: 1px;
+      box-shadow: 2px 2px 0px 0px rgba(0,0,0,0.2);
+    }
+  }

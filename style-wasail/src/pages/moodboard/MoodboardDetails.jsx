@@ -3,79 +3,73 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import VantaBackground from '../../components/miscellaneous/VantaBackground';
-import Navbar from '../../components/Miscellaneous/Navbar';
+import Navbar from '../../components/miscellaneous/Navbar';
 import OutfitModal from '../../components/outfit/OutfitModal';
 import { useMoodboards } from '../../context/MoodboardContext';
+import { useAuth } from '../../context/AuthContext';
+import { formatCurrency } from '../../utils/formatters';
 
 export default function MoodboardDetails() {
   const { moodboardId } = useParams();
   const navigate = useNavigate();
-  const { moodboards, removeOutfitFromMoodboard, deleteMoodboard } = useMoodboards();
+  const { moodboards, removeOutfitFromMoodboard, deleteMoodboard, updateMoodboard } = useMoodboards();
+  const { user } = useAuth();
   const [moodboard, setMoodboard] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedOutfit, setSelectedOutfit] = useState(null);
   const [activeComponent, setActiveComponent] = useState(0);
-  const [outfitDetails, setOutfitDetails] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const foundMoodboard = moodboards.find(board => board.id === Number(moodboardId));
+    const foundMoodboard = moodboards.find(board => board._id === moodboardId);
     if (foundMoodboard) {
       setMoodboard(foundMoodboard);
-
-      // Load outfit details
-      if (foundMoodboard.outfits) {
-        // In a real app, you would fetch the full outfit details from an API
-        // For now, we'll simulate that with some example data
-        const simulatedOutfitDetails = foundMoodboard.outfits.map(outfit => ({
-          ...outfit,
-          user: "StyleShare User",
-          price: Math.floor(Math.random() * 30) + 20, // Random price between $20-$50
-          description: `A beautiful outfit for any occasion. This is a placeholder description for outfit ID ${outfit.id}.`,
-          components: [
-            {
-              type: "Top",
-              description: "Stylish top piece that complements the overall look.",
-              image: "https://via.placeholder.com/400x500?text=Outfit+Top"
-            },
-            {
-              type: "Bottom",
-              description: "Well-fitted bottom that pairs perfectly with the top.",
-              image: "https://via.placeholder.com/400x500?text=Outfit+Bottom"
-            },
-            {
-              type: "Shoes",
-              description: "Comfortable yet stylish footwear to complete the look.",
-              image: "https://via.placeholder.com/400x500?text=Outfit+Shoes"
-            }
-          ]
-        }));
-        setOutfitDetails(simulatedOutfitDetails);
-      }
-    } else {
-      // Redirect to moodboards page if the ID doesn't exist
-      navigate('/moodboards');
+      setEditName(foundMoodboard.name);
+      setEditDescription(foundMoodboard.description || '');
     }
-  }, [moodboardId, moodboards, navigate]);
+  }, [moodboards, moodboardId]);
 
-  const handleRemoveOutfit = (e, outfitId) => {
-    e.stopPropagation(); // Prevent triggering the outfit click
-    removeOutfitFromMoodboard(Number(moodboardId), outfitId);
+  const handleDeleteMoodboard = async () => {
+    try {
+      await deleteMoodboard(moodboardId);
+      navigate('/moodboards');
+    } catch (err) {
+      setError('Failed to delete moodboard');
+    }
   };
 
-  const handleDeleteMoodboard = () => {
-    deleteMoodboard(Number(moodboardId));
-    navigate('/moodboards');
+  const handleRemoveOutfit = async (outfitId) => {
+    try {
+      await removeOutfitFromMoodboard(moodboardId, outfitId);
+    } catch (err) {
+      setError('Failed to remove outfit from moodboard');
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      await updateMoodboard(moodboardId, {
+        name: editName,
+        description: editDescription
+      });
+      setIsEditing(false);
+    } catch (err) {
+      setError('Failed to update moodboard');
+    }
   };
 
   const handleOutfitClick = (outfit) => {
-    const outfitDetail = outfitDetails.find(detail => detail.id === outfit.id);
-    if (outfitDetail) {
-      setSelectedOutfit(outfitDetail);
-      setActiveComponent(0);
-    }
+    console.log('Clicked outfit:', outfit);
+    setSelectedOutfit(outfit._id);
+    setActiveComponent(0);
   };
 
   if (!moodboard) return null;
+
+  const isCreator = user && moodboard.creator._id === user._id;
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
@@ -95,103 +89,200 @@ export default function MoodboardDetails() {
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-          <Motion.h1
-            style={{
-              fontFamily: "'Cal Sans', sans-serif",
-              fontSize: '3rem',
-              fontWeight: 700,
-              color: 'rgb(94, 9, 65)'
-            }}
-          >
-            {moodboard.name}
-          </Motion.h1>
+          {isEditing ? (
+            <div style={{ flex: 1, marginRight: '2rem' }}>
+              <input
+                type="text"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  borderRadius: '10px',
+                  border: '1px solid #ccc',
+                  fontSize: '1.5rem',
+                  marginBottom: '1rem'
+                }}
+              />
+              <textarea
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  borderRadius: '10px',
+                  border: '1px solid #ccc',
+                  fontSize: '1rem',
+                  minHeight: '100px',
+                  resize: 'vertical'
+                }}
+                placeholder="Add a description..."
+              />
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                <button
+                  onClick={() => setIsEditing(false)}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '10px',
+                    border: '1px solid #ccc',
+                    backgroundColor: 'white',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveEdit}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '10px',
+                    border: 'none',
+                    backgroundColor: 'rgb(94, 9, 65)',
+                    color: 'white',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          ) : (
+            <Motion.h1
+              style={{
+                fontFamily: "'Cal Sans', sans-serif",
+                fontSize: '3rem',
+                fontWeight: 700,
+                color: 'rgb(94, 9, 65)'
+              }}
+            >
+              {moodboard.name}
+            </Motion.h1>
+          )}
           
-          <button 
-            onClick={() => setIsDeleteModalOpen(true)}
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
-              borderRadius: '10px',
-              padding: '0.5rem 1rem',
-              color: 'rgb(94, 9, 65)',
-              cursor: 'pointer'
-            }}
-          >
-            Delete Moodboard
-          </button>
+          {isCreator && !moodboard.isSystem && (
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button 
+                onClick={() => setIsEditing(true)}
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  backdropFilter: 'blur(8px)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  borderRadius: '10px',
+                  padding: '0.5rem 1rem',
+                  color: 'rgb(94, 9, 65)',
+                  cursor: 'pointer'
+                }}
+              >
+                Edit
+              </button>
+              <button 
+                onClick={() => setIsDeleteModalOpen(true)}
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  backdropFilter: 'blur(8px)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  borderRadius: '10px',
+                  padding: '0.5rem 1rem',
+                  color: 'rgb(94, 9, 65)',
+                  cursor: 'pointer'
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          )}
         </div>
         
-        <p style={{ 
-          color: 'rgba(94, 9, 65, 0.8)', 
-          fontSize: '1.2rem', 
-          marginBottom: '2rem' 
-        }}>
-          {moodboard.outfitCount} saved outfits
-        </p>
+        {moodboard.description && !isEditing && (
+          <p style={{ 
+            color: 'rgba(94, 9, 65, 0.8)', 
+            fontSize: '1.2rem', 
+            marginBottom: '2rem' 
+          }}>
+            {moodboard.description}
+          </p>
+        )}
+        
+        {error && (
+          <p style={{ 
+            color: 'red', 
+            marginBottom: '1rem',
+            padding: '1rem',
+            backgroundColor: 'rgba(255, 0, 0, 0.1)',
+            borderRadius: '10px'
+          }}>
+            {error}
+          </p>
+        )}
         
         {moodboard.outfits && moodboard.outfits.length > 0 ? (
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
             gap: '2rem'
           }}>
-            {moodboard.outfits.map((outfit) => (
+            {moodboard.outfits.map(({ outfit }) => (
               <Motion.div
-                key={outfit.id}
+                key={outfit._id}
                 whileHover={{ y: -5 }}
-                onClick={() => handleOutfitClick(outfit)}
                 style={{
                   backgroundColor: 'rgba(255, 255, 255, 0.2)',
                   backdropFilter: 'blur(8px)',
                   borderRadius: '20px',
-                  padding: '1.5rem',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  position: 'relative',
+                  overflow: 'hidden',
                   cursor: 'pointer'
                 }}
               >
-                <button
-                  onClick={(e) => handleRemoveOutfit(e, outfit.id)}
-                  style={{
-                    position: 'absolute',
-                    top: '10px',
-                    right: '10px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                    width: '30px',
-                    height: '30px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: 'none',
-                    cursor: 'pointer',
-                    zIndex: 5
-                  }}
+                <div 
+                  onClick={() => handleOutfitClick(outfit)}
+                  style={{ position: 'relative' }}
                 >
-                  ✕
-                </button>
-                <div style={{
-                  backgroundColor: 'rgba(94, 9, 65, 0.1)',
-                  borderRadius: '10px',
-                  height: '200px',
-                  marginBottom: '1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  overflow: 'hidden'
-                }}>
-                  {outfitDetails.find(detail => detail.id === outfit.id)?.components?.[0]?.image ? (
-                    <img 
-                      src={outfitDetails.find(detail => detail.id === outfit.id)?.components[0].image}
-                      alt={outfit.title}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                  ) : (
-                    <span style={{ color: 'rgb(94, 9, 65)' }}>Outfit Image</span>
-                  )}
+                  <img
+                    src={outfit.mainImage}
+                    alt={outfit.title}
+                    style={{
+                      width: '100%',
+                      height: '300px',
+                      objectFit: 'cover'
+                    }}
+                  />
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end',
+                    padding: '1rem'
+                  }}>
+                    <h3 style={{ color: 'white', margin: 0 }}>{outfit.title}</h3>
+                    <p style={{ color: 'rgba(255,255,255,0.8)', margin: '0.5rem 0 0' }}>
+                      {formatCurrency(outfit.price)}
+                    </p>
+                  </div>
                 </div>
-                <h3 style={{ color: 'rgb(94, 9, 65)', marginBottom: '0.5rem' }}>{outfit.title}</h3>
+                
+                {isCreator && !moodboard.isSystem && (
+                  <button
+                    onClick={() => handleRemoveOutfit(outfit._id)}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      border: 'none',
+                      color: 'rgb(94, 9, 65)',
+                      cursor: 'pointer',
+                      transition: 'background-color 0.2s'
+                    }}
+                    onMouseOver={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
+                    onMouseOut={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                  >
+                    Remove from moodboard
+                  </button>
+                )}
               </Motion.div>
             ))}
           </div>
