@@ -64,8 +64,8 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5174',
   'http://localhost:3000',
-  'https://style-wasail.vercel.app',
-  'https://style-wasail-frontend.vercel.app',
+  'https://style-wasail-web-tech-mvp.vercel.app',
+  'https://style-wasail-backend.vercel.app',
   'https://*.vercel.app'
 ];
 
