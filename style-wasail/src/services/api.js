@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-const API_URL = `http://localhost:5000/api/v1`;  // Using the port from your config.env
+// Determine the API URL based on the environment
+const API_URL = import.meta.env.PROD 
+  ? 'https://style-wasail-backend.vercel.app/api/v1'  // Production URL
+  : 'http://localhost:5000/api/v1';  // Development URL
+
 const isDev = false; // Set to false to use real API calls
 
 // Create axios instance
@@ -8,7 +12,8 @@ const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  withCredentials: true // Enable sending cookies if needed
 });
 
 // Add request interceptor to add auth token
@@ -51,7 +56,12 @@ export const authAPI = {
     console.log('Registration response:', response);
     return response;
   },
-  login: (credentials) => api.post('/users/login', credentials),
+  login: async (credentials) => {
+    console.log('Making login request with:', credentials);
+    const response = await api.post('/users/login', credentials);
+    console.log('Login response:', response);
+    return response;
+  },
   getMe: () => api.get('/users/me'),
   updateDetails: (userData) => api.put('/users/updatedetails', userData),
   updatePassword: (passwords) => api.put('/users/updatepassword', passwords)
