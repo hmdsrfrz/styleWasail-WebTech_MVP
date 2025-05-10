@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Determine the API URL based on the environment
+// Get API URL from environment variable or use default
 const API_URL = import.meta.env.PROD 
   ? 'https://style-wasail-backend.vercel.app/api/v1'  // Production URL
   : 'http://localhost:5000/api/v1';  // Development URL
