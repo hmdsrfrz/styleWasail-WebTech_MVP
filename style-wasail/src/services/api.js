@@ -11,9 +11,10 @@ const isDev = false; // Set to false to use real API calls
 const api = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
   },
-  withCredentials: true // Enable sending cookies if needed
+  withCredentials: false // Changed to false since we're using token-based auth
 });
 
 // Add request interceptor to add auth token
