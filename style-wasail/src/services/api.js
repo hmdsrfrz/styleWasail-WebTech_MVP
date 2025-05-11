@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Get API URL from environment variable or use default
 const API_URL = import.meta.env.PROD 
-  ? 'stylewasail-webtechmvp-production.up.railway.app'  // Production URL
+  ? 'https://stylewasail-webtechmvp-production.up.railway.app'  // Production URL
   : 'http://localhost:5000/api/v1';  // Development URL
 
 const isDev = false; // Set to false to use real API calls
