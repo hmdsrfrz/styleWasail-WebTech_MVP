@@ -216,7 +216,7 @@ export default function OutfitModal({ outfit, activeComponent, setActiveComponen
                 </div>
               </div>
 
-              <div className="rent-form-section" style={{ marginTop: '2rem' }}>
+              <div className="rent-form-section" style={{ marginTop: '2rem', marginRight: "2rem"  }}>
                 <h3>Rent this Outfit</h3>
                 <form onSubmit={handleRentSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <div>

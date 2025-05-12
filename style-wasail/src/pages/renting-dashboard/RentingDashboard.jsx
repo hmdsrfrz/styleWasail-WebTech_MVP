@@ -197,6 +197,23 @@ export default function RentingDashboard() {
     return baseAmount + extensionAmount;
   }
 
+  const WhatsAppButton = () => {
+    return (
+      <a
+        href="https://wa.me/+923355333073"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="whatsapp-button"
+      >
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+          alt="WhatsApp"
+          className="whatsapp-icon"
+        />
+      </a>
+    );
+  };
+
   if (loading) return <div className="account-content">Loading...</div>;
   if (error) return <div className="account-content" style={{ color: 'red' }}>{error}</div>;
 
@@ -204,6 +221,7 @@ export default function RentingDashboard() {
     <div className="renting-dashboard-container">
       <Navbar />
       <VantaBackground />
+      <WhatsAppButton />
       <Motion.div
         className="dashboard-content"
         initial={{ opacity: 0 }}

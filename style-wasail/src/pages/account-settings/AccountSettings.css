@@ -1,6 +1,7 @@
 /* src/components/AccountSettings.css */
 .account-settings-container {
     min-height: 100vh;
+    overflow-y: auto;
     padding: 1rem;
     position: relative;
   }
@@ -203,6 +204,8 @@
   
   .history-dropdown-content {
     background: rgba(255, 255, 255, 0.1);
+    overflow-y: auto;
+    max-height: 500px;
     backdrop-filter: blur(10px);
     border-radius: 12px;
     padding: 1rem;

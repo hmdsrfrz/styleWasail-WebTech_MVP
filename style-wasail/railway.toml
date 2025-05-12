@@ -1,0 +1,17 @@
+[build]
+builder = "nixpacks"
+buildCommand = "cd server && npm install"
+
+[deploy]
+startCommand = "cd server && node server.js"
+healthcheckPath = "/api/v1/health"
+healthcheckTimeout = 100
+restartPolicyType = "on-failure"
+restartPolicyMaxRetries = 10
+
+[deploy.edge]
+cors = true
+allowedOrigins = ["https://style-wasail-web-tech-mvp.vercel.app"]
+allowedMethods = ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]
+allowedHeaders = ["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"]
+maxAge = 86400 

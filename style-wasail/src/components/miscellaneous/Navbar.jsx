@@ -47,7 +47,7 @@ export default function Navbar() {
           paddingLeft: '1rem'
         }}
       >
-        Style Wasa'il
+        Style Wasayl
       </Motion.h2>
 
       {navItems.map((item, index) => (

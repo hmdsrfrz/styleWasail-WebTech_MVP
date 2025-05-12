@@ -38,7 +38,7 @@ export default function UserHome() {
         className="navbar"
       >
         <Motion.h2 className="app-title">
-          Style Wasa'il
+          Style Wasayl
         </Motion.h2>
 
         {navItems.map((item, index) => (

@@ -17,9 +17,10 @@
   background: linear-gradient(135deg, #fff0f6 0%, #f9e6f7 100%);
   border-radius: 18px;
   padding: 2rem;
-  width: 95%;
+  width: 100%;
   max-width: 1200px;
-  min-height: auto;
+  min-width: 800px;
+  min-height: 60vh;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 10px 40px 0 rgba(94, 9, 65, 0.18), 0 2px 8px 0 rgba(94, 9, 65, 0.08);

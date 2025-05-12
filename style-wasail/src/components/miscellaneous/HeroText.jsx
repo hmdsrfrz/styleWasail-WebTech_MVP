@@ -23,11 +23,11 @@ const Paragraph = ({ onClick }) => {
         cursor: 'pointer',
       }}
     >
-      Style Wasail is a modern outfit-sharing platform that blends the visual appeal of Pinterest with the practicality of eBay.
+      Style Wasayl is a modern outfit-sharing platform that blends the visual appeal of Pinterest with the practicality of eBay.
       It allows users to sign up, list complete outfits with detailed components like shirts, shoes, and accessories, and rent items
       at affordable prices—typically 5% of their original cost. The platform is dynamic and user-driven, enabling seamless switching
       between renter and lender modes, much like Fiverr's buyer/seller toggle. With a clean, scrollable interface and interactive moodboards,
-      Style Wasail offers a creative and sustainable way to explore, share, and rent fashion.
+      Style Wasayl offers a creative and sustainable way to explore, share, and rent fashion.
     </Motion.p>
   );
 };
@@ -57,7 +57,7 @@ const HeroText = () => {
           WebkitTextFillColor: 'transparent',
         }}
       >
-        WELCOME TO STYLE WASA'IL
+        WELCOME TO STYLE WASAYL
       </Motion.h1>
 
       <Paragraph />
