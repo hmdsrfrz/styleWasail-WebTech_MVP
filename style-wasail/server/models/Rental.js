@@ -36,8 +36,11 @@ const rentalSchema = new mongoose.Schema({
     requested: { type: Boolean, default: false },
     startDate: Date,
     endDate: Date,
-    status: { type: String, enum: ['pending', 'approved', 'declined'], default: 'pending' },
-    additionalAmount: Number
+    totalDays: Number,
+    amount: Number,
+    status: { type: String, enum: ['pending', 'accepted', 'declined'], default: 'pending' },
+    receiptImage: String,
+    transactionDate: Date
   }
 }, { timestamps: true });
 

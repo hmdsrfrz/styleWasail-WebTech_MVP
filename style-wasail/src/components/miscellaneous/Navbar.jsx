@@ -20,7 +20,7 @@ export default function Navbar() {
       onHoverEnd={() => setIsNavHovered(false)}
       initial={{ x: -280 }}
       animate={{ x: isNavHovered ? 0 : -280 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+      transition={{ duration: 0.2, ease: 'easeInOut' }}
       style={{
         position: 'fixed',
         left: 0,

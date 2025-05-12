@@ -34,11 +34,14 @@ export function MoodboardProvider({ children }) {
         setIsLoading(true);
         const response = await api.get('/moodboards');
         console.log('Moodboards response:', response.data); // Debug log
-        setMoodboards(response.data.data.moodboards);
+        // Handle both possible response structures
+        const moodboardsData = response.data.data?.moodboards || response.data.moodboards || [];
+        setMoodboards(moodboardsData);
         setError(null);
       } catch (err) {
         console.error('Error fetching moodboards:', err.response || err); // Enhanced error logging
         setError('Failed to load moodboards');
+        setMoodboards([]); // Set empty array on error
       } finally {
         setIsLoading(false);
       }
@@ -61,8 +64,14 @@ export function MoodboardProvider({ children }) {
         isPublic
       });
       
-      setMoodboards(prev => [...prev, response.data.data.moodboard]);
-      return response.data.data.moodboard;
+      // Handle both possible response structures
+      const newMoodboard = response.data.data?.moodboard || response.data.moodboard;
+      if (newMoodboard) {
+        setMoodboards(prev => [...prev, newMoodboard]);
+        return newMoodboard;
+      } else {
+        throw new Error('Invalid response format from server');
+      }
     } catch (err) {
       console.error('Error creating moodboard:', err);
       throw new Error('Failed to create moodboard');

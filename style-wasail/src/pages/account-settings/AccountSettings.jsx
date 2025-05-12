@@ -2,12 +2,12 @@ import { motion as Motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import VantaBackground from '../../components/miscellaneous/VantaBackground';
-import Navbar from '../../components/miscellaneous/Navbar';
+import NavToggle from '../../components/miscellaneous/NavToggle';
 import OutfitModal from '../../components/outfit/OutfitModal';
 import './AccountSettings.css';
 import { rentalAPI, outfitAPI, authAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { FaCog } from 'react-icons/fa';
+import { FaCog, FaMoon, FaSun } from 'react-icons/fa';
 
 export default function AccountSettings() {
   const { user, setUser } = useAuth();
@@ -22,6 +22,7 @@ export default function AccountSettings() {
   const [rentalHistory, setRentalHistory] = useState([]);
   const [viewingReceipt, setViewingReceipt] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [darkTheme, setDarkTheme] = useState(false);
   const [userSettings, setUserSettings] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -40,6 +41,31 @@ export default function AccountSettings() {
     mostRentedOutfit: null,
     recentActivity: []
   });
+
+  // Load theme preference from localStorage on component mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('styleWasail_darkTheme');
+    if (savedTheme) {
+      setDarkTheme(savedTheme === 'true');
+    }
+  }, []);
+
+  // Apply dark theme class to document body when theme changes
+  useEffect(() => {
+    if (darkTheme) {
+      document.body.classList.add('dark-theme');
+    } else {
+      document.body.classList.remove('dark-theme');
+    }
+    
+    // Save theme preference to localStorage
+    localStorage.setItem('styleWasail_darkTheme', darkTheme);
+  }, [darkTheme]);
+
+  // Toggle theme function
+  const toggleTheme = () => {
+    setDarkTheme(prev => !prev);
+  };
 
   useEffect(() => {
     fetchRentalHistory();
@@ -262,9 +288,9 @@ export default function AccountSettings() {
   };
 
   return (
-    <div className="account-settings-container">
+    <div className={`account-settings-container ${darkTheme ? 'dark-theme' : ''}`}>
       <VantaBackground />
-      <Navbar />
+      <NavToggle />
 
       <Motion.div
         className="account-content"
@@ -301,46 +327,43 @@ export default function AccountSettings() {
         </div>
         
         <div className="dashboard-grid">
-          {/* Stats Cards */}
-          <div className="stats-card total-rentals">
+          {/* First row of stats cards */}
+          <div className="stats-card">
             <h3>Total Rentals</h3>
             <div className="stat-value">{stats.totalRentals}</div>
-            <div className="stat-label">All Time</div>
+            <div className="stat-label">Lifetime Rentals</div>
           </div>
 
-          <div className="stats-card active-rentals">
+          <div className="stats-card">
             <h3>Active Rentals</h3>
             <div className="stat-value">{stats.activeRentals}</div>
-            <div className="stat-label">Current</div>
+            <div className="stat-label">Currently Active</div>
           </div>
 
-          <div className="stats-card total-earned">
-            <h3>Total Earned</h3>
+          <div className="stats-card">
+            <h3>Total Earnings</h3>
             <div className="stat-value">{formatCurrency(stats.totalEarned)}</div>
-            <div className="stat-label">From Rentals</div>
+            <div className="stat-label">From Lending</div>
           </div>
 
-          <div className="stats-card total-spent">
+          <div className="stats-card">
             <h3>Total Spent</h3>
             <div className="stat-value">{formatCurrency(stats.totalSpent)}</div>
             <div className="stat-label">On Rentals</div>
           </div>
 
-          <div className="stats-card upcoming-rentals">
+          {/* Second row cards - restored */}
+          <div className="stats-card">
             <h3>Upcoming Rentals</h3>
             <div className="stat-value">{stats.upcomingRentals}</div>
             <div className="stat-label">Pending</div>
           </div>
 
-          <div className="stats-card avg-duration">
-            <h3>Average Duration</h3>
-            <div className="stat-value">{Math.round(stats.averageRentalDuration)}</div>
-            <div className="stat-label">Days</div>
-          </div>
+        
 
           {/* Most Rented Outfit */}
           {stats.mostRentedOutfit && (
-            <div className="stats-card most-rented">
+            <div className="stats-card">
               <h3>Most Rented Outfit</h3>
               <div className="outfit-preview">
                 {stats.mostRentedOutfit.images?.[0] && (
@@ -361,21 +384,22 @@ export default function AccountSettings() {
             </div>
           )}
 
-          {/* Recent Activity */}
-          <div className="stats-card recent-activity">
+          {/* Recent Activity Card - Scrollable */}
+          <div className="stats-card recent-activity-card">
             <h3>Recent Activity</h3>
-            <div className="activity-list">
-              {stats.recentActivity.map((activity, index) => (
+            {stats.recentActivity.length > 0 ? (
+              stats.recentActivity.map((activity, index) => (
                 <div key={index} className={`activity-item ${activity.type}`}>
-                  <div className="activity-amount">{formatCurrency(activity.amount)}</div>
-                  <div className="activity-details">
-                    <div className="activity-type">{activity.type === 'earned' ? 'Earned from' : 'Spent on'}</div>
-                    <div className="activity-outfit">{activity.outfit}</div>
-                    <div className="activity-date">{formatDate(activity.date)}</div>
+                  <div className="activity-type">
+                    {activity.type === 'earned' ? 'Earned from' : 'Spent on'} {activity.outfit}
                   </div>
+                  <div className="activity-amount">{formatCurrency(activity.amount)}</div>
+                  <div className="activity-date">{formatDate(activity.date)}</div>
                 </div>
-              ))}
-            </div>
+              ))
+            ) : (
+              <div className="empty-state">No recent activity</div>
+            )}
           </div>
         </div>
 
@@ -451,6 +475,15 @@ export default function AccountSettings() {
           )}
         </div>
       </Motion.div>
+
+      {/* Theme toggle button */}
+      <button 
+        className="theme-toggle" 
+        onClick={toggleTheme}
+        aria-label={darkTheme ? "Switch to light theme" : "Switch to dark theme"}
+      >
+        {darkTheme ? <FaSun /> : <FaMoon />}
+      </button>
 
       {/* Settings Modal */}
       {showSettings && (

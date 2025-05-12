@@ -20,6 +20,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+// Add enhanced debugging for uploads
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
@@ -29,6 +30,42 @@ const storage = new CloudinaryStorage({
   }
 });
 
-const upload = multer({ storage: storage });
+// Create multer upload with debugging middleware
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+});
 
-export { cloudinary, upload }; 
+// Add debug wrapper for upload
+const debugUpload = (fieldName) => {
+  console.log(`Setting up upload middleware for field: ${fieldName}`);
+  const middleware = upload.single(fieldName);
+  
+  return (req, res, next) => {
+    console.log('Processing file upload request...');
+    middleware(req, res, (err) => {
+      if (err) {
+        console.error('File upload error:', err);
+        return res.status(400).json({
+          status: 'error',
+          message: `File upload failed: ${err.message}`
+        });
+      }
+      
+      if (req.file) {
+        console.log('File uploaded successfully:', {
+          fieldname: req.file.fieldname,
+          originalname: req.file.originalname,
+          path: req.file.path,
+          size: req.file.size
+        });
+      } else {
+        console.log('No file was uploaded');
+      }
+      
+      next();
+    });
+  };
+};
+
+export { cloudinary, upload, debugUpload }; 

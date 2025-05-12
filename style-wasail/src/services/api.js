@@ -104,7 +104,7 @@ export const rentalAPI = {
   getRentalHistory: () => api.get('/rentals/history'),
   createRental: (rentalData) => api.post('/rentals/request', rentalData),
   updateRental: (id, rentalData) => api.put(`/rentals/${id}`, rentalData),
-  deleteRental: (id) => api.delete(`/rentals/${id}`),
+  deleteRental: (id) => api.delete(`/rentals/${id}/cancel`),
   acceptRental: (id) => api.put(`/rentals/${id}/accept`),
   declineRental: (id) => api.put(`/rentals/${id}/decline`),
   requestExtension: (id, extensionData) => api.post(`/rentals/${id}/extension`, extensionData),
@@ -120,6 +120,7 @@ export const rentalAPI = {
   }),
   acceptExtension: (id) => api.put(`/rentals/${id}/accept-extension`),
   declineExtension: (id) => api.put(`/rentals/${id}/decline-extension`),
+  cancelExtensionRequest: (id) => api.delete(`/rentals/${id}/extension`),
 };
 
 export default api; 

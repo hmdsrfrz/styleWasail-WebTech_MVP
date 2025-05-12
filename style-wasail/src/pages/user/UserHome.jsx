@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion as Motion } from 'framer-motion';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import VantaBackground from '../../components/miscellaneous/VantaBackground';
+import NavToggle from '../../components/miscellaneous/NavToggle';
 import OutfitGrid from '../../components/outfit/OutfitGrid';
 import CreateOutfitModal from '../../components/outfit/CreateOutfitModal';
 import FilterModal from '../../components/outfit/FilterModal';
@@ -9,18 +10,10 @@ import '../../components/outfit/OutfitGrid.css';
 import './UserHome.css';
 
 export default function UserHome() {
-  const [isNavHovered, setIsNavHovered] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
   const location = useLocation();
-
-  const navItems = [
-    { name: 'Home', path: '/user-home' },
-    { name: 'Moodboards', path: '/moodboards' },
-    { name: 'Renting Dashboard', path: '/renting' },
-    { name: 'Account Settings', path: '/account' }
-  ];
 
   const handleCreateOutfit = (outfitData) => {
     console.log('New outfit created:', outfitData);
@@ -35,36 +28,7 @@ export default function UserHome() {
   return (
     <div className="user-home-container">
       <VantaBackground />
-
-      {/* Hoverable Navbar */}
-      <Motion.div
-        onHoverStart={() => setIsNavHovered(true)}
-        onHoverEnd={() => setIsNavHovered(false)}
-        initial={{ x: -280 }}
-        animate={{ x: isNavHovered ? 0 : -280 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-        className="navbar"
-      >
-        <Motion.h2 className="app-title">
-          Style Wasayl
-        </Motion.h2>
-
-        {navItems.map((item, index) => (
-          <Motion.div
-            key={item.name}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 + 0.3 }}
-          >
-            <Link
-              to={item.path}
-              className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
-            >
-              {item.name}
-            </Link>
-          </Motion.div>
-        ))}
-      </Motion.div>
+      <NavToggle />
 
       {/* Main Content - Outfit Grid */}
       <Motion.div
@@ -72,6 +36,44 @@ export default function UserHome() {
         animate={{ opacity: 1 }}
         className="main-content"
       >
+        {/* Header with Logo and Tagline */}
+        <div className="home-header">
+          <div className="logo-container">
+            <svg className="sw-logo" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+              {/* Background circle */}
+              <circle cx="16" cy="16" r="16" fill="#5E0941"/>
+              
+              {/* Stylized "S" */}
+              <path d="M22 10C22 10 20 8 16 8C12 8 10 10 10 12C10 14 12 15 14 16C16 17 18 18 18 20C18 22 16 24 12 24" 
+                    stroke="white" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"/>
+              
+              {/* Small dot */}
+              <circle cx="12" cy="24" r="1" fill="white"/>
+            </svg>
+          </div>
+          <div className="tagline-container">
+            <Motion.h1 
+              className="tagline"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <span className="highlight">STYLE</span> IT OUT
+            </Motion.h1>
+            <Motion.p 
+              className="subtagline"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              Discover, share, and rent the perfect outfits for any occasion
+            </Motion.p>
+          </div>
+        </div>
+        
         <OutfitGrid selectedTags={selectedTags} />
       </Motion.div>
 

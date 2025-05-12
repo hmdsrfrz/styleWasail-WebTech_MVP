@@ -1,46 +1,241 @@
 /* src/components/CreateOutfitModal.css */
+:root {
+  /* Brand colors - more pinkish now */
+  --color-primary: rgb(219, 56, 144);
+  --color-primary-dark: rgb(186, 30, 117);
+  --color-primary-light: rgba(219, 56, 144, 0.15);
+  --color-primary-lighter: rgba(219, 56, 144, 0.07);
+  --color-accent: #ffb6e1;
+  --color-accent-light: #ffdbf0;
+  
+  /* Spacing */
+  --space-xs: clamp(0.25rem, 0.3vw, 0.5rem);
+  --space-sm: clamp(0.5rem, 0.5vw, 0.75rem);
+  --space-md: clamp(1rem, 1vw, 1.25rem);
+  --space-lg: clamp(1.5rem, 1.5vw, 2rem);
+  --space-xl: clamp(2rem, 2vw, 2.5rem);
+  
+  /* Typography */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Cal Sans', var(--font-primary);
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.05em;
+  --letter-spacing-wider: 0.1em;
+}
+
 .create-outfit-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(219, 56, 144, 0.15);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    backdrop-filter: blur(4px);
-    padding: 1rem;
+  backdrop-filter: blur(8px);
+  padding: var(--space-md);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
   }
   
   .create-outfit-modal-content {
-    background-color: white;
-    border-radius: 16px;
-    padding: 1.5rem;
-    width: 95%;
+  background: linear-gradient(to bottom right, rgba(255, 245, 252, 0.95), rgba(255, 236, 246, 0.85));
+  border-radius: 20px;
+  padding: var(--space-xl);
+  width: 92%;
     max-width: 1000px;
     min-height: auto;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(219, 56, 144, 0.15);
+  border: 2px solid rgba(255, 182, 225, 0.4);
     display: flex;
     flex-direction: column;
-  }
-  
+  scrollbar-width: thin;
+  scrollbar-color: rgba(219, 56, 144, 0.5) transparent;
+  animation: scaleIn 0.3s ease;
+  position: relative;
+}
+
+/* Remove decorative elements */
+.create-outfit-modal-content::before,
+.create-outfit-modal-content::after {
+  display: none;
+}
+
+.create-outfit-modal-title::before {
+  display: none;
+}
+
+/* Improved title text styling */
   .create-outfit-modal-title {
-    color: rgb(94, 9, 65);
-    margin-bottom: 1.5rem;
-    font-family: 'Cal Sans', sans-serif;
-    font-size: 1.5rem;
+  color: var(--color-primary);
+  margin-bottom: var(--space-lg);
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 700;
+  letter-spacing: var(--letter-spacing-tight);
+  text-align: center;
+  position: relative;
+  padding-bottom: var(--space-sm);
+  text-shadow: none;
+}
+
+/* Enhanced input fields, especially for title and price */
+.create-outfit-modal-input, 
+.create-outfit-modal-textarea, 
+.create-outfit-modal-select {
+  width: 100%;
+  padding: var(--space-md);
+  background-color: white;
+  border: 1px solid rgba(219, 56, 144, 0.2);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(219, 56, 144, 0.07);
+  font-size: 1rem;
+  color: #333;
+  outline: none;
+}
+
+.create-outfit-modal-input:focus, 
+.create-outfit-modal-textarea:focus, 
+.create-outfit-modal-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(219, 56, 144, 0.15);
+  background-color: white;
+}
+
+/* Style specifically for title and price inputs */
+.create-outfit-modal-input[name="title"],
+.create-outfit-modal-input[name="price"] {
+  font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-width: 2px;
+  padding: var(--space-md) var(--space-lg);
+}
+
+.create-outfit-modal-input[name="title"]:focus,
+.create-outfit-modal-input[name="price"]:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(219, 56, 144, 0.2);
+}
+
+/* Better cancel button - further enhanced */
+.create-outfit-modal-button.secondary,
+.create-outfit-modal-back-btn {
+  background-color: white;
+  color: var(--color-primary-dark);
+  border: 2px solid var(--color-primary);
+  border-radius: 16px;
     font-weight: 600;
-    letter-spacing: -0.5px;
+  padding: var(--space-md) var(--space-xl);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  min-width: 140px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.create-outfit-modal-button.secondary::before,
+.create-outfit-modal-back-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 236, 246, 0.5), transparent);
+  transition: all 0.5s ease;
+  z-index: -1;
+}
+
+.create-outfit-modal-button.secondary:hover::before,
+.create-outfit-modal-back-btn:hover::before {
+  left: 100%;
+}
+
+.create-outfit-modal-button.secondary:hover,
+.create-outfit-modal-back-btn:hover {
+  background-color: rgba(255, 236, 246, 0.7);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  box-shadow: 0 6px 12px rgba(219, 56, 144, 0.2);
+  transform: translateY(-2px);
+}
+
+.create-outfit-modal-button.secondary:active,
+.create-outfit-modal-back-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 236, 246, 0.9);
+}
+
+/* Remove charming indicator for selected items */
+.create-outfit-modal-thumbnail.active::after {
+  display: none;
+}
+
+/* Improve selected thumbnail indicator in a more professional way */
+.create-outfit-modal-thumbnail.active {
+  border: 3px solid var(--color-primary);
+  box-shadow: 0 0 0 2px white, 0 0 0 4px rgba(219, 56, 144, 0.3);
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Custom scrollbar styling */
+.create-outfit-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.create-outfit-modal-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.create-outfit-modal-content::-webkit-scrollbar-thumb {
+  background-color: rgba(219, 56, 144, 0.5);
+  border-radius: 20px;
+  border: 2px solid transparent;
+}
+
+.create-outfit-modal-content::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(219, 56, 144, 0.7);
+}
+
+.create-outfit-modal-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(to right, transparent, var(--color-primary), transparent);
+  border-radius: 20px;
+}
+
+.create-outfit-modal-title::before {
+  content: '✨';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  font-size: 24px;
   }
   
   .create-outfit-modal-grid {
     display: flex;
-    gap: 2rem;
+  gap: var(--space-xl);
     flex: 1;
     min-height: 0;
   }
@@ -51,38 +246,50 @@
   }
   
   .create-outfit-modal-main-image-container {
-    margin-bottom: 1.5rem;
+  margin-bottom: var(--space-lg);
     position: relative;
   }
   
   .create-outfit-modal-main-image-title {
-    font-size: 1rem;
-    color: #444;
-    margin-bottom: 0.75rem;
-    font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+  font-weight: 600;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
   }
   
   .create-outfit-modal-main-image {
     width: 100%;
-    height: 280px;
+  height: 300px;
     object-fit: cover;
-    border-radius: 10px;
-    background-color: #f8f8f8;
-    border: 1px dashed #ddd;
+  border-radius: 16px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px dashed rgba(219, 56, 144, 0.3);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   }
   
   .create-outfit-modal-main-image-placeholder {
     width: 100%;
-    height: 280px;
+  height: 300px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #f8f8f8;
-    border-radius: 10px;
-    color: #888;
-    font-size: 0.9rem;
-    border: 1px dashed #ddd;
+  background-color: rgba(255, 236, 246, 0.5);
+  border-radius: 16px;
+  color: var(--color-primary);
+  font-size: 0.95rem;
+  border: 2px dashed rgba(219, 56, 144, 0.3);
     position: relative;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.create-outfit-modal-main-image-placeholder:hover {
+  border-color: var(--color-primary);
+  background-color: rgba(255, 236, 246, 0.7);
+  box-shadow: 0 6px 15px rgba(219, 56, 144, 0.15);
   }
   
   .create-outfit-modal-image-upload {
@@ -97,47 +304,52 @@
   }
   
   .create-outfit-modal-thumbnails-container {
-    margin-bottom: 1.5rem;
+  margin-bottom: var(--space-lg);
   }
   
   .create-outfit-modal-thumbnails-title {
-    font-size: 1rem;
-    color: #444;
-    margin-bottom: 0.75rem;
-    font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+  font-weight: 600;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
   }
   
   .create-outfit-modal-thumbnails-grid {
     display: flex;
-    gap: 0.75rem;
+  gap: var(--space-sm);
     flex-wrap: wrap;
   }
   
   .create-outfit-modal-thumbnail {
-    width: 70px;
-    height: 70px;
-    border-radius: 8px;
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
     overflow: hidden;
     position: relative;
-    border: 1px solid #e0e0e0;
+  border: 1px solid rgba(219, 56, 144, 0.15);
     cursor: pointer;
-    transition: all 0.2s ease;
-    background-color: #f8f8f8;
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   }
   
   .create-outfit-modal-thumbnail:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .create-outfit-modal-thumbnail.active {
-    border: 2px solid rgb(94, 9, 65);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 12px rgba(219, 56, 144, 0.12);
+  border-color: rgba(219, 56, 144, 0.3);
   }
   
   .create-outfit-modal-thumbnail-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.create-outfit-modal-thumbnail:hover .create-outfit-modal-thumbnail-image {
+  transform: scale(1.1);
   }
   
   .create-outfit-modal-thumbnail-placeholder {
@@ -147,10 +359,11 @@
     align-items: center;
     justify-content: center;
     font-size: 0.75rem;
-    color: #888;
+  color: var(--color-primary);
     text-align: center;
-    padding: 0.5rem;
+  padding: var(--space-sm);
     position: relative;
+  font-weight: 500;
   }
   
   .create-outfit-modal-thumbnail-upload {
@@ -170,100 +383,72 @@
   }
   
   .create-outfit-modal-form-group {
-    margin-bottom: 1.25rem;
+  margin-bottom: var(--space-lg);
   }
   
   .create-outfit-modal-label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: #444;
-    font-size: 0.9rem;
-  }
-  
-  .create-outfit-modal-input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    color: #333;
-    transition: border-color 0.2s ease;
-  }
-  
-  .create-outfit-modal-input:focus {
-    outline: none;
-    border-color: rgb(94, 9, 65);
-  }
-  
-  .create-outfit-modal-textarea {
-    width: 100%;
-    padding: 0.75rem;
-    border-radius: 6px;
-    border: 1px solid #e0e0e0;
-    font-family: inherit;
+  margin-bottom: var(--space-sm);
+  font-weight: 600;
+  color: var(--color-primary);
     font-size: 0.95rem;
-    min-height: 100px;
-    resize: vertical;
-    transition: border-color 0.2s ease;
-    background-color: #fcfcfc;
-  }
-  
-  .create-outfit-modal-textarea:focus {
-    outline: none;
-    border-color: rgb(94, 9, 65);
-    box-shadow: 0 0 0 2px rgba(94, 9, 65, 0.1);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
   }
   
   .create-outfit-modal-component-title {
     font-size: 1.1rem;
-    color: #444;
-    margin-bottom: 1rem;
-    font-weight: 500;
+  color: var(--color-primary);
+  margin-bottom: var(--space-md);
+  font-weight: 600;
+  letter-spacing: var(--letter-spacing-tight);
   }
   
   .create-outfit-modal-actions {
     display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+  justify-content: center;
   }
   
   .create-outfit-modal-button {
-    padding: 0.75rem 1.5rem;
+  padding: var(--space-sm) var(--space-lg);
     border: none;
-    border-radius: 8px;
+  border-radius: 12px;
     font-size: 0.95rem;
-    font-weight: 500;
+  font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .create-outfit-modal-button.primary {
-    background-color: rgb(94, 9, 65);
-    color: white;
-  }
-  
-  .create-outfit-modal-button.secondary {
-    background-color: #f0f0f0;
-    color: #333;
+  transition: all 0.3s ease;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.create-outfit-modal-button.primary,
+.create-outfit-modal-submit-btn,
+.create-outfit-modal-next-btn {
+  background: linear-gradient(135deg, #ff79c6, #db3890);
+  box-shadow: 0 4px 12px rgba(219, 56, 144, 0.25);
+  border-radius: 16px;
+}
+
+.create-outfit-modal-button.primary:hover,
+.create-outfit-modal-submit-btn:hover,
+.create-outfit-modal-next-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(219, 56, 144, 0.35);
+  background: linear-gradient(135deg, #ff8fd0, #e941a0);
   }
   
   .create-outfit-modal-submit-btn {
-    padding: 0.75rem 1.5rem;
-    background-color: rgb(94, 9, 65);
-    color: white;
     border: none;
-    border-radius: 6px;
+  padding: var(--space-md) var(--space-xl);
     cursor: pointer;
-    font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-  }
-  
-  .create-outfit-modal-submit-btn:hover {
-    background-color: rgb(74, 9, 55);
-    transform: translateY(-1px);
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  transition: all 0.3s ease;
   }
   
   .create-outfit-modal-submit-btn:active {
@@ -274,276 +459,288 @@
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    font-weight: bold;
-    border-radius: 8px;
+  flex-direction: column;
+  font-size: 1rem;
+  color: var(--color-primary);
+  font-weight: 600;
+  z-index: 10;
+  border-radius: 16px;
+  backdrop-filter: blur(4px);
   }
   
   .create-outfit-modal-tags {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 0.5rem;
+  background-color: rgba(255, 236, 246, 0.5);
+  border-radius: 18px;
+  border: 1px solid rgba(219, 56, 144, 0.15);
+  padding: var(--space-md) var(--space-lg);
   }
   
   .create-outfit-modal-tag-category {
-    margin-bottom: 1rem;
+  margin-bottom: var(--space-md);
+  position: relative;
   }
   
   .create-outfit-modal-tag-category h4 {
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 0.5rem;
-    text-transform: capitalize;
+  color: var(--color-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+  letter-spacing: var(--letter-spacing-tight);
+  position: relative;
+  display: inline-block;
   }
   
   .create-outfit-modal-tag-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
   }
   
   .create-outfit-modal-tag {
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-    border: 1px solid #ddd;
-    background: white;
-    color: #666;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    user-select: none;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(219, 56, 144, 0.2);
+  border-radius: 100px;
+  padding: var(--space-xs) var(--space-md);
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
   }
   
   .create-outfit-modal-tag:hover {
-    border-color: rgb(94, 9, 65);
-    color: rgb(94, 9, 65);
-    transform: translateY(-1px);
+  background-color: rgba(255, 236, 246, 0.7);
+  border-color: rgba(219, 56, 144, 0.4);
+  transform: translateY(-3px) scale(1.05);
   }
   
   .create-outfit-modal-tag.selected {
-    background-color: rgb(94, 9, 65);
+  background: linear-gradient(135deg, #ff79c6, #db3890);
     color: white;
-    border-color: rgb(94, 9, 65);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(94, 9, 65, 0.2);
+  border: none;
+  box-shadow: 0 3px 8px rgba(219, 56, 144, 0.25);
   }
   
   .create-outfit-modal-tag.selected:hover {
-    background-color: rgb(74, 9, 55);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(94, 9, 65, 0.3);
+  background: linear-gradient(135deg, #ff8fd0, #e941a0);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(219, 56, 144, 0.35);
   }
   
   .create-outfit-modal-next-btn {
-    padding: 0.75rem 1.5rem;
-    background-color: rgb(94, 9, 65);
-    color: white;
     border: none;
-    border-radius: 6px;
+  padding: var(--space-sm) var(--space-xl);
     cursor: pointer;
-    font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-  }
-  
-  .create-outfit-modal-next-btn:hover {
-    background-color: rgb(74, 9, 55);
-    transform: translateY(-1px);
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  transition: all 0.3s ease;
   }
   
   .create-outfit-modal-next-btn:disabled {
-    background-color: #ccc;
+  background: linear-gradient(135deg, #ccc, #999);
     cursor: not-allowed;
     transform: none;
-  }
-  
-  .create-outfit-modal-back-btn {
-    padding: 0.75rem 1.5rem;
-    background-color: #f0f0f0;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: #555;
-    transition: all 0.2s ease;
-  }
-  
-  .create-outfit-modal-back-btn:hover {
-    background-color: #e0e0e0;
+  box-shadow: none;
   }
   
   .create-outfit-modal-add-component {
-    width: 85px;
-    height: 85px;
-    border-radius: 8px;
-    border: 2px dashed #ddd;
-    background-color: #f8f8f8;
-    color: #888;
-    font-size: 2rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px dashed rgba(219, 56, 144, 0.3);
+  color: var(--color-primary);
+  padding: var(--space-md);
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.95rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
+  gap: var(--space-sm);
+  transition: all 0.3s ease;
+  font-weight: 500;
+  margin-top: var(--space-sm);
   }
   
   .create-outfit-modal-add-component:hover {
-    border-color: rgb(94, 9, 65);
-    color: rgb(94, 9, 65);
-    background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-color: var(--color-primary);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(219, 56, 144, 0.1);
   }
   
   .create-outfit-modal-select {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 1rem;
-    background-color: white;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 12px;
+  border: 1px solid rgba(219, 56, 144, 0.2);
+  background-color: rgba(255, 255, 255, 0.7);
     color: #333;
+  font-size: 0.95rem;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6' fill='none'%3E%3Cpath fill='%235e0941' d='M6 6 0 0h12L6 6Z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
     cursor: pointer;
     transition: all 0.2s ease;
   }
   
   .create-outfit-modal-select:hover {
-    border-color: rgb(94, 9, 65);
+  border-color: rgba(219, 56, 144, 0.4);
   }
   
   .create-outfit-modal-select:focus {
     outline: none;
-    border-color: rgb(94, 9, 65);
-    box-shadow: 0 0 0 2px rgba(94, 9, 65, 0.1);
+  border-color: rgba(219, 56, 144, 0.5);
+  box-shadow: 0 0 0 3px rgba(219, 56, 144, 0.1);
   }
   
   .create-outfit-modal-select option {
-    padding: 8px;
+  background-color: white;
+  color: #333;
   }
   
   .create-outfit-modal-select optgroup {
-    font-weight: bold;
-    color: rgb(94, 9, 65);
+  font-weight: 600;
+  color: var(--color-primary);
   }
   
   .create-outfit-modal-add-component-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 8px;
-    background: #f5f5f5;
-    border-radius: 8px;
+  background-color: rgba(255, 236, 246, 0.5);
+  border-radius: 18px;
+  border: 1px solid rgba(219, 56, 144, 0.15);
+  padding: var(--space-md) var(--space-lg);
   }
   
   .create-outfit-modal-component-select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background: white;
-    font-size: 14px;
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+  align-items: center;
   }
   
   .create-outfit-modal-add-component {
-    width: 100%;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #007bff;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
     color: white;
     border: none;
-    border-radius: 4px;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: 12px;
     cursor: pointer;
-    font-size: 20px;
-    transition: background-color 0.2s;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: var(--letter-spacing-wide);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(94, 9, 65, 0.15);
+  white-space: nowrap;
   }
   
   .create-outfit-modal-add-component:disabled {
-    background: #ccc;
+  background: linear-gradient(135deg, #ccc, #999);
     cursor: not-allowed;
   }
   
   .create-outfit-modal-add-component:hover:not(:disabled) {
-    background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(94, 9, 65, 0.25);
+}
+
+/* Increase height of description textarea */
+.create-outfit-modal-textarea {
+  min-height: 180px;
+  line-height: 1.5;
+  font-family: var(--font-primary);
+  font-size: 0.95rem;
+  resize: vertical;
+  transition: all 0.2s ease;
+  background-color: white;
+  border-radius: 12px;
+  border: 1px solid rgba(219, 56, 144, 0.2);
+  box-shadow: 0 2px 6px rgba(219, 56, 144, 0.05);
+  outline: none;
+  padding: var(--space-md);
+  width: 100%;
+}
+
+.create-outfit-modal-textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(219, 56, 144, 0.15);
+}
+
+/* Ensure textarea description styles are applied specifically */
+.create-outfit-modal-textarea[name="description"] {
+  min-height: 180px;
   }
   
   @media (max-width: 768px) {
     .create-outfit-modal-content {
-      padding: 1rem;
-      width: 100%;
+    padding: var(--space-md);
+    width: 95%;
     }
   
     .create-outfit-modal-title {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
+    font-size: 1.5rem;
+    margin-bottom: var(--space-md);
     }
   
     .create-outfit-modal-grid {
       flex-direction: column;
-      gap: 1.5rem;
+    gap: var(--space-md);
     }
   
     .create-outfit-modal-main-image,
     .create-outfit-modal-main-image-placeholder {
-      height: 220px;
+    height: 240px;
     }
   
     .create-outfit-modal-thumbnail {
-      width: 60px;
-      height: 60px;
+    width: 70px;
+    height: 70px;
     }
   
     .create-outfit-modal-form-group {
-      margin-bottom: 1rem;
+    margin-bottom: var(--space-md);
     }
   
     .create-outfit-modal-actions {
       flex-direction: column;
-      gap: 0.75rem;
     }
   
     .create-outfit-modal-button {
       width: 100%;
-      padding: 0.6rem 1rem;
     }
   }
   
   @media (max-width: 480px) {
     .create-outfit-modal-content {
-      padding: 0.75rem;
+    padding: var(--space-sm);
     }
   
     .create-outfit-modal-title {
-      font-size: 1.1rem;
+    font-size: 1.3rem;
     }
   
     .create-outfit-modal-main-image,
     .create-outfit-modal-main-image-placeholder {
-      height: 180px;
+    height: 200px;
     }
   
     .create-outfit-modal-thumbnail {
-      width: 50px;
-      height: 50px;
+    width: 60px;
+    height: 60px;
     }
   
     .create-outfit-modal-label {
-      font-size: 0.85rem;
-    }
+    font-size: 0.9rem;
+  }
   
-    .create-outfit-modal-input {
-      padding: 0.6rem;
-      font-size: 0.85rem;
+  .create-outfit-modal-input,
+  .create-outfit-modal-textarea,
+  .create-outfit-modal-select {
+    font-size: 0.9rem;
+    padding: var(--space-sm);
     }
   }

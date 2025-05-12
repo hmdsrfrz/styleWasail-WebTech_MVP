@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import VantaBackground from '../../components/miscellaneous/VantaBackground';
-import Navbar from '../../components/miscellaneous/Navbar';
+import NavToggle from '../../components/miscellaneous/NavToggle';
 import OutfitModal from '../../components/outfit/OutfitModal';
 import { useMoodboards } from '../../context/MoodboardContext';
 import { useAuth } from '../../context/AuthContext';
@@ -72,9 +72,18 @@ export default function MoodboardDetails() {
   const isCreator = user && moodboard.creator._id === user._id;
 
   return (
-    <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
+    <div style={{ 
+      position: 'relative', 
+      width: '100vw', 
+      height: '100vh', 
+      overflow: 'hidden',
+      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+      WebkitFontSmoothing: 'antialiased',
+      MozOsxFontSmoothing: 'grayscale',
+      textRendering: 'optimizeLegibility',
+    }}>
       <VantaBackground />
-      <Navbar />
+      <NavToggle />
       
       <Motion.div
         initial={{ opacity: 0 }}
@@ -83,12 +92,20 @@ export default function MoodboardDetails() {
           position: 'relative',
           zIndex: 1,
           height: '100%',
-          padding: '2rem',
+          padding: '2.5rem',
           marginLeft: '300px',
-          overflowY: 'auto'
+          overflowY: 'auto',
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'rgba(94, 9, 65, 0.5) transparent'
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: '2rem',
+          position: 'relative'
+        }}>
           {isEditing ? (
             <div style={{ flex: 1, marginRight: '2rem' }}>
               <input
@@ -97,11 +114,22 @@ export default function MoodboardDetails() {
                 onChange={(e) => setEditName(e.target.value)}
                 style={{
                   width: '100%',
-                  padding: '0.75rem',
-                  borderRadius: '10px',
-                  border: '1px solid #ccc',
+                  padding: '0.85rem 1rem',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(94, 9, 65, 0.2)',
                   fontSize: '1.5rem',
-                  marginBottom: '1rem'
+                  marginBottom: '1rem',
+                  outline: 'none',
+                  transition: 'border-color 0.2s, box-shadow 0.2s',
+                  boxShadow: '0 2px 6px rgba(94, 9, 65, 0.05)'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = 'rgba(94, 9, 65, 0.5)';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(94, 9, 65, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'rgba(94, 9, 65, 0.2)';
+                  e.target.style.boxShadow = '0 2px 6px rgba(94, 9, 65, 0.05)';
                 }}
               />
               <textarea
@@ -109,12 +137,23 @@ export default function MoodboardDetails() {
                 onChange={(e) => setEditDescription(e.target.value)}
                 style={{
                   width: '100%',
-                  padding: '0.75rem',
-                  borderRadius: '10px',
-                  border: '1px solid #ccc',
+                  padding: '0.85rem 1rem',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(94, 9, 65, 0.2)',
                   fontSize: '1rem',
                   minHeight: '100px',
-                  resize: 'vertical'
+                  resize: 'vertical',
+                  outline: 'none',
+                  transition: 'border-color 0.2s, box-shadow 0.2s',
+                  boxShadow: '0 2px 6px rgba(94, 9, 65, 0.05)'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = 'rgba(94, 9, 65, 0.5)';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(94, 9, 65, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'rgba(94, 9, 65, 0.2)';
+                  e.target.style.boxShadow = '0 2px 6px rgba(94, 9, 65, 0.05)';
                 }}
                 placeholder="Add a description..."
               />
@@ -122,11 +161,26 @@ export default function MoodboardDetails() {
                 <button
                   onClick={() => setIsEditing(false)}
                   style={{
-                    padding: '0.75rem 1.5rem',
-                    borderRadius: '10px',
-                    border: '1px solid #ccc',
-                    backgroundColor: 'white',
-                    cursor: 'pointer'
+                    padding: '0.85rem 1.5rem',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(94, 9, 65, 0.3)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    color: 'rgb(94, 9, 65)',
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    letterSpacing: '0.03em'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 1)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(94, 9, 65, 0.1)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
                   Cancel
@@ -134,12 +188,25 @@ export default function MoodboardDetails() {
                 <button
                   onClick={handleSaveEdit}
                   style={{
-                    padding: '0.75rem 1.5rem',
-                    borderRadius: '10px',
+                    padding: '0.85rem 1.5rem',
+                    borderRadius: '12px',
                     border: 'none',
-                    backgroundColor: 'rgb(94, 9, 65)',
+                    background: 'linear-gradient(135deg, rgb(94, 9, 65), rgb(74, 9, 55))',
                     color: 'white',
-                    cursor: 'pointer'
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    boxShadow: '0 4px 12px rgba(94, 9, 65, 0.15)',
+                    letterSpacing: '0.03em'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(94, 9, 65, 0.25)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(94, 9, 65, 0.15)';
                   }}
                 >
                   Save
@@ -147,30 +214,74 @@ export default function MoodboardDetails() {
               </div>
             </div>
           ) : (
-            <Motion.h1
-              style={{
-                fontFamily: "'Cal Sans', sans-serif",
-                fontSize: '3rem',
-                fontWeight: 700,
-                color: 'rgb(94, 9, 65)'
-              }}
-            >
-              {moodboard.name}
-            </Motion.h1>
+            <>
+              <Motion.div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  width: '100%'
+                }}
+              >
+                <Motion.h1
+                  initial={{ y: -20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  style={{
+                    fontFamily: "'Cal Sans', var(--font-primary)",
+                    fontSize: 'clamp(2.5rem, 4vw, 3.5rem)',
+                    fontWeight: 700,
+                    color: 'rgb(94, 9, 65)',
+                    marginBottom: '0.5rem',
+                    textAlign: 'center',
+                    position: 'relative',
+                    letterSpacing: '-0.02em',
+                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
+                  }}
+                >
+                  {moodboard.name}
+                </Motion.h1>
+                <div style={{
+                  height: '3px',
+                  width: '80px',
+                  background: 'linear-gradient(to right, transparent, rgb(94, 9, 65), transparent)',
+                  borderRadius: '4px',
+                  marginBottom: '1.5rem'
+                }}/>
+              </Motion.div>
+            </>
           )}
           
           {isCreator && !moodboard.isSystem && (
-            <div style={{ display: 'flex', gap: '1rem' }}>
+            <div style={{ 
+              display: 'flex', 
+              gap: '1rem',
+              position: 'absolute',
+              right: '0',
+              top: '0'
+            }}>
               <button 
                 onClick={() => setIsEditing(true)}
                 style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  backdropFilter: 'blur(8px)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  borderRadius: '10px',
-                  padding: '0.5rem 1rem',
+                  backgroundColor: 'rgba(255, 255, 255, 0.4)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255, 255, 255, 0.5)',
+                  borderRadius: '12px',
+                  padding: '0.6rem 1.2rem',
                   color: 'rgb(94, 9, 65)',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  fontSize: '0.95rem',
+                  letterSpacing: '0.03em',
+                  boxShadow: '0 2px 8px rgba(94, 9, 65, 0.08)',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(94, 9, 65, 0.15)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(94, 9, 65, 0.08)';
                 }}
               >
                 Edit
@@ -178,13 +289,26 @@ export default function MoodboardDetails() {
               <button 
                 onClick={() => setIsDeleteModalOpen(true)}
                 style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  backdropFilter: 'blur(8px)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  borderRadius: '10px',
-                  padding: '0.5rem 1rem',
+                  backgroundColor: 'rgba(255, 255, 255, 0.4)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255, 255, 255, 0.5)',
+                  borderRadius: '12px',
+                  padding: '0.6rem 1.2rem',
                   color: 'rgb(94, 9, 65)',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  fontSize: '0.95rem',
+                  letterSpacing: '0.03em',
+                  boxShadow: '0 2px 8px rgba(94, 9, 65, 0.08)',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(94, 9, 65, 0.15)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(94, 9, 65, 0.08)';
                 }}
               >
                 Delete
@@ -197,7 +321,13 @@ export default function MoodboardDetails() {
           <p style={{ 
             color: 'rgba(94, 9, 65, 0.8)', 
             fontSize: '1.2rem', 
-            marginBottom: '2rem' 
+            marginBottom: '2rem',
+            textAlign: 'center',
+            maxWidth: '800px',
+            margin: '0 auto 2rem',
+            lineHeight: '1.6',
+            fontStyle: 'italic',
+            fontWeight: '500'
           }}>
             {moodboard.description}
           </p>
@@ -235,15 +365,20 @@ export default function MoodboardDetails() {
               >
                 <div 
                   onClick={() => handleOutfitClick(outfit)}
-                  style={{ position: 'relative' }}
+                  style={{ position: 'relative', width: '100%', height: '0', paddingTop: '140%', overflow: 'hidden' }}
                 >
                   <img
                     src={outfit.mainImage}
                     alt={outfit.title}
                     style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
                       width: '100%',
-                      height: '300px',
-                      objectFit: 'cover'
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: 'center',
+                      transition: 'transform 0.3s ease'
                     }}
                   />
                   <div style={{

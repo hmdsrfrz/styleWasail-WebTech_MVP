@@ -3,7 +3,7 @@ import Rental from '../models/Rental.js';
 import Outfit from '../models/Outfit.js';
 import RentalHistory from '../models/RentalHistory.js';
 import { protect } from '../middleware/auth.js';
-import { upload } from '../config/cloudinary.js';
+import { upload, debugUpload } from '../config/cloudinary.js';
 
 const router = express.Router();
 
@@ -169,7 +169,7 @@ router.put('/:id/accept', protect, async (req, res) => {
   }
 });
 
-// Decline a rental request
+// Decline rental request
 router.put('/:id/decline', protect, async (req, res) => {
   try {
     const rental = await Rental.findById(req.params.id);
@@ -182,13 +182,13 @@ router.put('/:id/decline', protect, async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to decline this rental' });
     }
 
-    // Check if the rental is in pending status
+    // Only allow declining of pending rentals
     if (rental.status !== 'pending') {
       return res.status(400).json({ message: 'Can only decline pending rentals' });
     }
 
     // Update rental status
-    rental.status = 'declined';
+    rental.status = 'cancelled';
     await rental.save();
 
     // Create rental history record
@@ -206,6 +206,7 @@ router.put('/:id/decline', protect, async (req, res) => {
 
     res.json(rental);
   } catch (err) {
+    console.error('Error declining rental:', err);
     res.status(500).json({ message: err.message });
   }
 });
@@ -252,25 +253,74 @@ router.get('/history', protect, async (req, res) => {
 });
 
 // Upload receipt image
-router.post('/:rentalId/receipt', protect, upload.single('receipt'), async (req, res) => {
+router.post('/:rentalId/receipt', protect, debugUpload('receipt'), async (req, res) => {
   try {
+    console.log('Receipt upload request received for rental ID:', req.params.rentalId);
+    console.log('Uploaded file:', req.file);
+    
     const rental = await Rental.findById(req.params.rentalId);
     if (!rental) {
+      console.log('Rental not found with ID:', req.params.rentalId);
       return res.status(404).json({ message: 'Rental not found' });
     }
 
     // Verify user is the renter
     if (rental.renter._id.toString() !== req.user._id.toString()) {
+      console.log('Unauthorized user attempt. Request user:', req.user._id, 'Rental renter:', rental.renter._id);
       return res.status(403).json({ message: 'Not authorized' });
     }
 
     if (!req.file) {
+      console.log('No receipt file uploaded');
       return res.status(400).json({ message: 'No receipt image uploaded' });
     }
 
+    // Check if this is for an extension request
+    if (rental.extensionRequest?.requested && rental.extensionRequest.status === 'pending') {
+      console.log('Processing EXTENSION receipt upload');
+      // Handle extension receipt
+      rental.extensionRequest.receiptImage = req.file.path;
+      rental.extensionRequest.transactionDate = new Date();
+      
+      // Create rental history record for extension receipt upload
+      const extensionHistory = new RentalHistory({
+        rental: rental._id,
+        outfit: {
+          _id: rental.outfit._id,
+          title: rental.outfit.title,
+          description: rental.outfit.description,
+          images: rental.outfit.images,
+          dailyPrice: rental.outfit.dailyPrice
+        },
+        owner: {
+          _id: rental.owner._id,
+          name: rental.owner.name,
+          email: rental.owner.email,
+          profileImage: rental.owner.profileImage
+        },
+        renter: {
+          _id: rental.renter._id,
+          name: rental.renter.name,
+          email: rental.renter.email,
+          profileImage: rental.renter.profileImage
+        },
+        rentalPeriod: rental.rentalPeriod,
+        payment: rental.payment,
+        extensionRequest: rental.extensionRequest,
+        status: 'extension_receipt_uploaded',
+        actionBy: req.user._id
+      });
+      await extensionHistory.save();
+      console.log('Extension history record created:', extensionHistory._id);
+    } else {
+      console.log('Processing NORMAL receipt upload');
+      // Handle normal receipt
     rental.payment.receiptImage = req.file.path;
     rental.payment.transactionDate = new Date();
+    }
+    
     await rental.save();
+    console.log('Rental updated successfully:', rental._id);
 
     res.json({
       status: 'success',
@@ -458,32 +508,58 @@ router.post('/:id/extension-receipt', protect, upload.single('receipt'), async (
 // Accept extension request
 router.put('/:id/accept-extension', protect, async (req, res) => {
   try {
+    console.log('Accept extension request received for rental ID:', req.params.id);
+    
     const rental = await Rental.findById(req.params.id);
     if (!rental) {
+      console.log('Rental not found with ID:', req.params.id);
       return res.status(404).json({ message: 'Rental not found' });
     }
 
+    console.log('Current rental status:', rental.status);
+    console.log('Extension request details:', rental.extensionRequest);
+
     // Check if the current user is the owner
     if (String(rental.owner._id) !== String(req.user._id)) {
+      console.log('Authorization failed. Request user:', req.user._id, 'Rental owner:', rental.owner._id);
       return res.status(403).json({ message: 'Not authorized to accept extension' });
     }
 
     // Check if there's a pending extension request with receipt
-    if (!rental.extensionRequest?.requested || 
-        rental.extensionRequest.status !== 'pending' ||
-        !rental.extensionRequest.receiptImage) {
-      return res.status(400).json({ 
-        message: 'No pending extension request with receipt found' 
-      });
+    if (!rental.extensionRequest?.requested) {
+      console.log('No extension request found');
+      return res.status(400).json({ message: 'No extension request found' });
     }
+    
+    if (rental.extensionRequest.status !== 'pending') {
+      console.log('Extension request not in pending status:', rental.extensionRequest.status);
+      return res.status(400).json({ message: 'Can only accept pending extension requests' });
+    }
+    
+    if (!rental.extensionRequest.receiptImage) {
+      console.log('No receipt image found for extension request');
+      return res.status(400).json({ message: 'Receipt must be uploaded before accepting extension' });
+    }
+
+    console.log('All checks passed, updating rental...');
 
     // Update rental period and extension status
     rental.rentalPeriod.endDate = rental.extensionRequest.endDate;
-    rental.rentalPeriod.totalDays += rental.extensionRequest.totalDays;
-    rental.payment.totalAmount += rental.extensionRequest.amount;
+    // Calculate the new total days if needed
+    const originalDays = rental.rentalPeriod.totalDays || 0;
+    const extensionDays = rental.extensionRequest.totalDays || 0;
+    rental.rentalPeriod.totalDays = originalDays + extensionDays;
+    
+    // Update the payment amount
+    const originalAmount = rental.payment.totalAmount || 0;
+    const extensionAmount = rental.extensionRequest.amount || 0;
+    rental.payment.totalAmount = originalAmount + extensionAmount;
+    
+    // Update the extension status
     rental.extensionRequest.status = 'accepted';
 
     await rental.save();
+    console.log('Rental updated successfully');
 
     // Create rental history record for extension acceptance
     const rentalHistory = new RentalHistory({
@@ -523,10 +599,19 @@ router.put('/:id/accept-extension', protect, async (req, res) => {
       actionBy: req.user._id
     });
     await rentalHistory.save();
+    console.log('Rental history record created');
 
-    res.json(rental);
+    return res.status(200).json({
+      status: 'success',
+      message: 'Extension request accepted successfully',
+      data: rental
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('Error accepting extension request:', err);
+    return res.status(500).json({ 
+      status: 'error',
+      message: err.message || 'Failed to accept extension request'
+    });
   }
 });
 
@@ -593,6 +678,48 @@ router.put('/:id/decline-extension', protect, async (req, res) => {
 
     res.json(rental);
   } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Cancel rental request
+router.delete('/:id/cancel', protect, async (req, res) => {
+  try {
+    const rental = await Rental.findById(req.params.id);
+    if (!rental) {
+      return res.status(404).json({ message: 'Rental not found' });
+    }
+
+    // Check if the current user is the renter
+    if (String(rental.renter._id) !== String(req.user._id)) {
+      return res.status(403).json({ message: 'Not authorized to cancel this rental' });
+    }
+
+    // Only allow cancellation of pending rentals
+    if (rental.status !== 'pending') {
+      return res.status(400).json({ message: 'Can only cancel pending rentals' });
+    }
+
+    // Update rental status
+    rental.status = 'cancelled';
+    await rental.save();
+
+    // Create rental history record
+    const rentalHistory = new RentalHistory({
+      rental: rental._id,
+      outfit: rental.outfit,
+      owner: rental.owner,
+      renter: rental.renter,
+      rentalPeriod: rental.rentalPeriod,
+      payment: rental.payment,
+      status: 'cancelled',
+      actionBy: req.user._id
+    });
+    await rentalHistory.save();
+
+    res.json(rental);
+  } catch (err) {
+    console.error('Error cancelling rental:', err);
     res.status(500).json({ message: err.message });
   }
 });

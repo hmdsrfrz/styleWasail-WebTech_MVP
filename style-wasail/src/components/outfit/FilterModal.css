@@ -4,85 +4,157 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(219, 56, 144, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
   padding: 1rem;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .filter-modal-content {
-  background: linear-gradient(135deg, #fff0f6 0%, #f9e6f7 100%);
-  border-radius: 18px;
+  background: linear-gradient(to bottom right, rgba(255, 245, 252, 0.95), rgba(255, 236, 246, 0.85));
+  border-radius: 20px;
   padding: 2rem;
   width: 95%;
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 10px 40px 0 rgba(94, 9, 65, 0.18);
-  border: 1.5px solid #f3e6f1;
+  box-shadow: 0 10px 30px rgba(219, 56, 144, 0.15);
+  border: 2px solid rgba(255, 182, 225, 0.4);
   position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(219, 56, 144, 0.5) transparent;
+  animation: scaleIn 0.3s ease;
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Scrollbar styling */
+.filter-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.filter-modal-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.filter-modal-content::-webkit-scrollbar-thumb {
+  background-color: rgba(219, 56, 144, 0.5);
+  border-radius: 20px;
+  border: 2px solid transparent;
+}
+
+.filter-modal-content::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(219, 56, 144, 0.7);
 }
 
 .filter-modal-content h2 {
-  color: rgb(94, 9, 65);
-  font-size: 1.5rem;
+  color: rgb(219, 56, 144);
   margin-bottom: 1.5rem;
+  font-family: 'Cal Sans', sans-serif;
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
   text-align: center;
+  position: relative;
+  padding-bottom: 0.5rem;
 }
 
 .close-button {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: none;
-  border: none;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(219, 56, 144, 0.2);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
   font-size: 1.5rem;
-  color: #a07ca5;
+  color: rgb(219, 56, 144);
   cursor: pointer;
-  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
   line-height: 1;
   z-index: 1;
 }
 
 .close-button:hover {
-  color: #5e0941;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: rgb(186, 30, 117);
+  transform: rotate(90deg);
+}
+
+.filter-category {
+  margin-bottom: 1.5rem;
+  position: relative;
+  background-color: rgba(255, 236, 246, 0.5);
+  border-radius: 18px;
+  border: 1px solid rgba(219, 56, 144, 0.15);
+  padding: 1rem 1.5rem;
+}
+
+.filter-category h3 {
+  color: rgb(219, 56, 144);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+  position: relative;
+  display: inline-block;
 }
 
 .tags-container {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-bottom: 2rem;
+  margin-top: 0.25rem;
 }
 
 .filter-tag {
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(219, 56, 144, 0.2);
+  border-radius: 100px;
   padding: 0.5rem 1rem;
-  border-radius: 20px;
-  border: 1px solid rgba(94, 9, 65, 0.3);
-  background: white;
-  color: rgb(94, 9, 65);
   font-size: 0.9rem;
+  transition: all 0.3s ease;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .filter-tag:hover {
-  background: rgba(94, 9, 65, 0.1);
-  transform: translateY(-1px);
+  background-color: rgba(255, 236, 246, 0.7);
+  border-color: rgba(219, 56, 144, 0.4);
+  transform: translateY(-3px) scale(1.05);
 }
 
 .filter-tag.selected {
-  background: rgb(94, 9, 65);
+  background: linear-gradient(135deg, #ff79c6, #db3890);
   color: white;
-  border-color: rgb(94, 9, 65);
+  border: none;
+  box-shadow: 0 3px 8px rgba(219, 56, 144, 0.25);
+}
+
+.filter-tag.selected:hover {
+  background: linear-gradient(135deg, #ff8fd0, #e941a0);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(219, 56, 144, 0.35);
 }
 
 .filter-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 1rem;
   margin-top: 1.5rem;
 }
@@ -90,36 +162,53 @@
 .clear-button,
 .apply-button {
   padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .clear-button {
-  background: #f0f0f0;
-  color: #333;
-  border: 1px solid #ddd;
-}
-
-.apply-button {
-  background: rgb(94, 9, 65);
-  color: white;
-  border: none;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #555;
+  border: 1px solid rgba(219, 56, 144, 0.2);
 }
 
 .clear-button:hover {
-  background: #e0e0e0;
+  background-color: rgba(255, 255, 255, 1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.apply-button {
+  background: linear-gradient(135deg, #ff79c6, #db3890);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 12px rgba(219, 56, 144, 0.25);
 }
 
 .apply-button:hover {
-  background: rgb(74, 9, 55);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(219, 56, 144, 0.35);
+  background: linear-gradient(135deg, #ff8fd0, #e941a0);
 }
 
 @media (max-width: 768px) {
   .filter-modal-content {
     padding: 1.5rem;
+    background: linear-gradient(to bottom right, rgba(255, 245, 252, 0.8), rgba(255, 236, 246, 0.7));
+  }
+
+  .filter-category {
+    background-color: rgba(255, 236, 246, 0.4);
+  }
+
+  .filter-tag {
+    background-color: rgba(255, 255, 255, 0.5);
   }
 
   .filter-modal-content h2 {
@@ -132,13 +221,11 @@
   }
 
   .filter-actions {
-    flex-direction: column;
     gap: 0.75rem;
   }
 
   .clear-button,
   .apply-button {
-    width: 100%;
     padding: 0.6rem 1rem;
     font-size: 0.9rem;
   }
@@ -147,14 +234,31 @@
 @media (max-width: 480px) {
   .filter-modal-content {
     padding: 1rem;
+    background: linear-gradient(to bottom right, rgba(255, 245, 252, 0.7), rgba(255, 236, 246, 0.6));
   }
 
   .filter-modal-content h2 {
     font-size: 1.1rem;
   }
 
+  .filter-category {
+    background-color: rgba(255, 236, 246, 0.3);
+    padding: 0.8rem 1rem;
+  }
+
   .filter-tag {
     font-size: 0.8rem;
     padding: 0.35rem 0.7rem;
+    background-color: rgba(255, 255, 255, 0.4);
+  }
+  
+  .filter-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .clear-button,
+  .apply-button {
+    width: 100%;
   }
 } 
